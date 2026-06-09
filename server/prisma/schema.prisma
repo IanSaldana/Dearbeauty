@@ -1,0 +1,47 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Manicurista {
+  id            Int       @id @default(autoincrement())
+  nombre        String
+  email         String    @unique
+  password_hash String
+  created_at    DateTime  @default(now())
+}
+
+model Clienta {
+  id          Int       @id @default(autoincrement())
+  nombre      String
+  telefono    String
+  email       String?
+  qr_code     String    @unique @default(uuid())
+  created_at  DateTime  @default(now())
+  tarjetas    Tarjeta[]
+}
+
+model Tarjeta {
+  id                  Int       @id @default(autoincrement())
+  clienta_id          Int
+  visitas_completadas Int       @default(0)
+  activa              Boolean   @default(true)
+  fecha_inicio        DateTime  @default(now())
+  fecha_vencimiento   DateTime
+  created_at          DateTime  @default(now())
+  clienta             Clienta   @relation(fields: [clienta_id], references: [id])
+  visitas             Visita[]
+}
+
+model Visita {
+  id             Int       @id @default(autoincrement())
+  tarjeta_id     Int
+  numero_visita  Int
+  recompensa     String?
+  fecha          DateTime  @default(now())
+  notas          String?
+  tarjeta        Tarjeta   @relation(fields: [tarjeta_id], references: [id])
+}

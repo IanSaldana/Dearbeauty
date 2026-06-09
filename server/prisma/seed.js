@@ -10,11 +10,11 @@ async function main() {
   const passwordHash = await bcrypt.hash('admin123', 12);
 
   const manicurista = await prisma.manicurista.upsert({
-    where: { email: 'admin@dearbeauty.com' },
+    where: { email: 'cata.saldivialanyon@gmail.com' },
     update: {},
     create: {
-      nombre: 'Manicurista',
-      email: 'admin@dearbeauty.com',
+      nombre: 'Catalina Saldivia',
+      email: 'cata.saldivialanyon@gmail.com',
       password_hash: passwordHash,
     },
   });

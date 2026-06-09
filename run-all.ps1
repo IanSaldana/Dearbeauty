@@ -35,7 +35,7 @@ Write-Host "=== Servicios iniciados ===" -ForegroundColor Green
 Write-Host "  Backend:  http://localhost:3001" -ForegroundColor Yellow
 Write-Host "  Frontend: http://localhost:5173" -ForegroundColor Yellow
 Write-Host ""
-Write-Host "Login: admin@dearbeauty.com / admin123" -ForegroundColor Gray
+Write-Host "Login: cata.saldivialanyon@gmail.com / admin123" -ForegroundColor Gray
 Write-Host ""
 Write-Host "Presiona ENTER para detener ambos servicios..." -ForegroundColor Magenta
 Read-Host

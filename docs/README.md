@@ -290,7 +290,7 @@ cd client && npm run dev
 
 ### 5. Acceder
 - Panel admin: http://localhost:5173
-- Login: `admin@dearbeauty.com` / `admin123`
+- Login: `cata.saldivialanyon@gmail.com` / `admin123`
 
 ---
 

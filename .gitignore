@@ -1,6 +1,7 @@
 node_modules/
 .env
 *.db
-prisma/migrations/
 generated/
 dist/
+.DS_Store
+Thumbs.db

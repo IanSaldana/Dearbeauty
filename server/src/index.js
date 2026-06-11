@@ -6,6 +6,7 @@ const prisma = require('./lib/prisma');
 const authRoutes = require('./routes/auth');
 const clientasRoutes = require('./routes/clientas');
 const visitasRoutes = require('./routes/visitas');
+const citasRoutes = require('./routes/citas');
 const { calcularProximoEvento } = require('./lib/eventos');
 
 const app = express();
@@ -23,6 +24,7 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/clientas', clientasRoutes);
 app.use('/api/visitas', visitasRoutes);
+app.use('/api/citas', citasRoutes);
 
 // Ruta pública - vista de la clienta (sin auth)
 app.get('/api/public/clienta/:qrCode', async (req, res) => {

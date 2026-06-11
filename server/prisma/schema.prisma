@@ -23,6 +23,7 @@ model Clienta {
   qr_code          String    @unique @default(uuid())
   created_at       DateTime  @default(now())
   tarjetas         Tarjeta[]
+  citas            Cita[]
 }
 
 model Tarjeta {
@@ -45,4 +46,16 @@ model Visita {
   fecha          DateTime  @default(now())
   notas          String?
   tarjeta        Tarjeta   @relation(fields: [tarjeta_id], references: [id])
+}
+
+model Cita {
+  id          Int       @id @default(autoincrement())
+  clienta_id  Int?
+  titulo      String
+  fecha       DateTime
+  hora_inicio String
+  hora_fin    String?
+  notas       String?
+  created_at  DateTime  @default(now())
+  clienta     Clienta?  @relation(fields: [clienta_id], references: [id])
 }

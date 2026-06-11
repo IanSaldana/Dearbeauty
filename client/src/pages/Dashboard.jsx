@@ -3,20 +3,55 @@ import { Link } from 'react-router-dom';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
 
+const DIAS_CORTOS = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+
+function getLunesDeSemana() {
+  const hoy = new Date();
+  const dia = hoy.getDay(); // 0=dom, 1=lun...
+  const diff = dia === 0 ? -6 : 1 - dia;
+  const lunes = new Date(hoy);
+  lunes.setDate(hoy.getDate() + diff);
+  lunes.setHours(0, 0, 0, 0);
+  return lunes;
+}
+
 export default function Dashboard() {
   const { manicurista, logout } = useAuth();
   const [clientas, setClientas] = useState([]);
   const [visitasRecientes, setVisitasRecientes] = useState([]);
+  const [citasSemana, setCitasSemana] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const lunes = getLunesDeSemana();
+    const domingo = new Date(lunes);
+    domingo.setDate(lunes.getDate() + 6);
+    // Usar mes del lunes para cargar citas (puede cruzar meses, cargar ambos)
+    const mes1 = `${lunes.getFullYear()}-${String(lunes.getMonth() + 1).padStart(2, '0')}`;
+    const mes2 = `${domingo.getFullYear()}-${String(domingo.getMonth() + 1).padStart(2, '0')}`;
+    const citasPromises = [api.get(`/citas?mes=${mes1}`)];
+    if (mes2 !== mes1) citasPromises.push(api.get(`/citas?mes=${mes2}`));
+
     Promise.all([
       api.get('/clientas'),
       api.get('/visitas/recientes'),
+      ...citasPromises,
     ])
-      .then(([clientasRes, visitasRes]) => {
-        setClientas(clientasRes.data);
-        setVisitasRecientes(visitasRes.data);
+      .then((responses) => {
+        setClientas(responses[0].data);
+        setVisitasRecientes(responses[1].data);
+        // Merge citas de ambos meses si aplica
+        let todasCitas = responses[2].data;
+        if (responses[3]) todasCitas = [...todasCitas, ...responses[3].data];
+        // Filtrar solo la semana actual
+        const lunesTS = lunes.getTime();
+        const domingoFin = new Date(domingo);
+        domingoFin.setHours(23, 59, 59, 999);
+        const citasFiltradas = todasCitas.filter((c) => {
+          const f = new Date(c.fecha).getTime();
+          return f >= lunesTS && f <= domingoFin.getTime();
+        });
+        setCitasSemana(citasFiltradas);
       })
       .finally(() => setLoading(false));
   }, []);
@@ -88,6 +123,50 @@ export default function Dashboard() {
         <div className="bg-white rounded-xl p-3 text-center shadow-sm">
           <p className="text-2xl font-bold text-red-400">{tarjetasPorVencer.length}</p>
           <p className="text-[10px] text-gray-500">Por vencer</p>
+        </div>
+      </div>
+
+      {/* Resumen semanal de citas */}
+      <div className="bg-white rounded-xl shadow-sm p-4">
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="font-semibold text-gray-800">📅 Esta semana</h2>
+          <Link to="/calendario" className="text-xs text-rosa-dark font-medium">
+            Ver calendario →
+          </Link>
+        </div>
+        <div className="grid grid-cols-7 gap-1">
+          {DIAS_CORTOS.map((nombre, i) => {
+            const lunes = getLunesDeSemana();
+            const dia = new Date(lunes);
+            dia.setDate(lunes.getDate() + i);
+            const diaNum = dia.getDate();
+            const esHoy = new Date().toDateString() === dia.toDateString();
+            // Citas de este día
+            const citasDia = citasSemana.filter((c) => {
+              const fc = new Date(c.fecha);
+              return fc.getUTCDate() === dia.getDate() && fc.getUTCMonth() === dia.getMonth();
+            });
+            return (
+              <div key={i} className={`text-center rounded-lg p-1.5 ${esHoy ? 'bg-rosa/40' : ''}`}>
+                <p className="text-[10px] text-gray-400 font-medium">{nombre}</p>
+                <p className={`text-sm font-bold ${esHoy ? 'text-rosa-dark' : 'text-gray-700'}`}>{diaNum}</p>
+                {citasDia.length > 0 ? (
+                  <div className="mt-1 space-y-0.5">
+                    {citasDia.slice(0, 2).map((c) => (
+                      <p key={c.id} className="text-[9px] text-rosa-dark truncate leading-tight">
+                        {c.hora_inicio} {c.clienta?.nombre || c.titulo}
+                      </p>
+                    ))}
+                    {citasDia.length > 2 && (
+                      <p className="text-[9px] text-gray-400">+{citasDia.length - 2} más</p>
+                    )}
+                  </div>
+                ) : (
+                  <p className="text-[9px] text-gray-300 mt-1">—</p>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
 

@@ -6,6 +6,7 @@ export default function RegistrarClienta() {
   const [nombre, setNombre] = useState('');
   const [telefono, setTelefono] = useState('');
   const [email, setEmail] = useState('');
+  const [fechaNacimiento, setFechaNacimiento] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -16,7 +17,12 @@ export default function RegistrarClienta() {
     setLoading(true);
 
     try {
-      await api.post('/clientas', { nombre, telefono, email: email || undefined });
+      await api.post('/clientas', {
+        nombre,
+        telefono,
+        email: email || undefined,
+        fecha_nacimiento: fechaNacimiento || undefined,
+      });
       navigate('/');
     } catch (err) {
       setError(err.response?.data?.error || 'Error al registrar clienta');
@@ -26,7 +32,7 @@ export default function RegistrarClienta() {
   };
 
   return (
-    <div className="max-w-lg mx-auto px-4 py-6">
+    <div className="max-w-lg mx-auto px-4 py-6 pb-24">
       <div className="bg-white rounded-2xl shadow-lg p-6">
         <h1 className="text-xl font-bold text-gray-800 mb-4">Nueva Clienta</h1>
 
@@ -71,6 +77,18 @@ export default function RegistrarClienta() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-rosa-dark/50"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Fecha de nacimiento (opcional)
+            </label>
+            <input
+              type="date"
+              value={fechaNacimiento}
+              onChange={(e) => setFechaNacimiento(e.target.value)}
               className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-rosa-dark/50"
             />
           </div>

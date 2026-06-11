@@ -109,7 +109,7 @@ router.get('/:id', async (req, res) => {
 // POST /api/clientas - Registrar nueva clienta
 router.post('/', async (req, res) => {
   try {
-    const { nombre, telefono, email } = req.body;
+    const { nombre, telefono, email, fecha_nacimiento } = req.body;
 
     if (!nombre || !telefono) {
       return res.status(400).json({ error: 'Nombre y teléfono son requeridos' });
@@ -123,6 +123,7 @@ router.post('/', async (req, res) => {
         nombre,
         telefono,
         email: email || null,
+        fecha_nacimiento: fecha_nacimiento ? new Date(fecha_nacimiento) : null,
         tarjetas: {
           create: {
             fecha_vencimiento: fechaVencimiento,
@@ -135,6 +136,84 @@ router.post('/', async (req, res) => {
     res.status(201).json(clienta);
   } catch (error) {
     console.error('Error registrando clienta:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+});
+
+// PUT /api/clientas/:id - Editar clienta
+router.put('/:id', async (req, res) => {
+  try {
+    const { nombre, telefono, email, fecha_nacimiento } = req.body;
+    const id = parseInt(req.params.id);
+
+    if (isNaN(id)) {
+      return res.status(400).json({ error: 'ID inválido' });
+    }
+
+    const clientaExistente = await prisma.clienta.findUnique({ where: { id } });
+    if (!clientaExistente) {
+      return res.status(404).json({ error: 'Clienta no encontrada' });
+    }
+
+    const data = {};
+    if (nombre !== undefined) data.nombre = nombre;
+    if (telefono !== undefined) data.telefono = telefono;
+    if (email !== undefined) data.email = email || null;
+    if (fecha_nacimiento !== undefined) {
+      data.fecha_nacimiento = fecha_nacimiento ? new Date(fecha_nacimiento) : null;
+    }
+
+    const clienta = await prisma.clienta.update({
+      where: { id },
+      data,
+      include: {
+        tarjetas: {
+          include: { visitas: { orderBy: { numero_visita: 'asc' } } },
+          orderBy: { created_at: 'desc' },
+        },
+      },
+    });
+
+    res.json(clienta);
+  } catch (error) {
+    console.error('Error editando clienta:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+});
+
+// DELETE /api/clientas/:id - Eliminar clienta y datos asociados
+router.delete('/:id', async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
+
+    if (isNaN(id)) {
+      return res.status(400).json({ error: 'ID inválido' });
+    }
+
+    const clienta = await prisma.clienta.findUnique({
+      where: { id },
+      include: { tarjetas: { select: { id: true } } },
+    });
+
+    if (!clienta) {
+      return res.status(404).json({ error: 'Clienta no encontrada' });
+    }
+
+    // Eliminar visitas de todas las tarjetas
+    const tarjetaIds = clienta.tarjetas.map((t) => t.id);
+    if (tarjetaIds.length > 0) {
+      await prisma.visita.deleteMany({ where: { tarjeta_id: { in: tarjetaIds } } });
+    }
+
+    // Eliminar tarjetas
+    await prisma.tarjeta.deleteMany({ where: { clienta_id: id } });
+
+    // Eliminar clienta
+    await prisma.clienta.delete({ where: { id } });
+
+    res.json({ message: 'Clienta eliminada correctamente' });
+  } catch (error) {
+    console.error('Error eliminando clienta:', error);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 });

@@ -5,3 +5,5 @@ generated/
 dist/
 .DS_Store
 Thumbs.db
+prompt/
+temp/

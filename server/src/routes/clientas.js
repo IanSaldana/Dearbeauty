@@ -1,6 +1,7 @@
 const express = require('express');
 const crypto = require('crypto');
 const prisma = require('../lib/prisma');
+const { calcularProximoEvento } = require('../lib/eventos');
 const authMiddleware = require('../middleware/auth');
 
 const router = express.Router();
@@ -99,7 +100,8 @@ router.get('/:id', async (req, res) => {
       return res.status(404).json({ error: 'Clienta no encontrada' });
     }
 
-    res.json(clienta);
+    const proximo_evento = calcularProximoEvento(clienta);
+    res.json({ ...clienta, proximo_evento });
   } catch (error) {
     console.error('Error obteniendo clienta:', error);
     res.status(500).json({ error: 'Error interno del servidor' });

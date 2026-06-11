@@ -6,6 +6,7 @@ const prisma = require('./lib/prisma');
 const authRoutes = require('./routes/auth');
 const clientasRoutes = require('./routes/clientas');
 const visitasRoutes = require('./routes/visitas');
+const { calcularProximoEvento } = require('./lib/eventos');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -40,11 +41,16 @@ app.get('/api/public/clienta/:qrCode', async (req, res) => {
       return res.status(404).json({ error: 'Tarjeta no encontrada' });
     }
 
+    // Calcular próximo evento
+    const proximo_evento = calcularProximoEvento(clienta);
+
     // No exponer datos sensibles
     res.json({
       nombre: clienta.nombre,
       qr_code: clienta.qr_code,
+      fecha_nacimiento: clienta.fecha_nacimiento,
       tarjetas: clienta.tarjetas,
+      proximo_evento,
     });
   } catch (error) {
     console.error('Error en vista pública:', error);

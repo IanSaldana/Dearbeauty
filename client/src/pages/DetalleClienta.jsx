@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { QRCodeSVG } from 'qrcode.react';
 import TarjetaFidelidad from '../components/TarjetaFidelidad';
+import BannerEvento from '../components/BannerEvento';
+import BotonCompartir from '../components/BotonCompartir';
 import api from '../services/api';
 
 export default function DetalleClienta() {
@@ -83,7 +85,7 @@ export default function DetalleClienta() {
             {clienta.email && <p className="text-sm text-gray-400">{clienta.email}</p>}
             {clienta.fecha_nacimiento && (
               <p className="text-sm text-gray-400">
-                🎂 {new Date(clienta.fecha_nacimiento).toLocaleDateString()}
+                🎂 {new Date(clienta.fecha_nacimiento).toLocaleDateString('es-CL', { timeZone: 'UTC' })}
               </p>
             )}
             <div className="flex justify-center gap-2 mt-3">
@@ -186,6 +188,9 @@ export default function DetalleClienta() {
         </div>
       )}
 
+      {/* Banner próximo evento */}
+      <BannerEvento evento={clienta.proximo_evento} />
+
       {/* Tarjeta */}
       {tarjetaActiva && (
         <TarjetaFidelidad visitas={tarjetaActiva.visitas_completadas} />
@@ -200,14 +205,17 @@ export default function DetalleClienta() {
         <p className="text-xs text-gray-400 mt-2">
           La clienta puede mostrar este QR desde su celular
         </p>
-        <a
-          href={qrUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-block mt-3 text-sm text-rosa-dark underline"
-        >
-          Ver vista de clienta
-        </a>
+        <div className="flex items-center justify-center gap-3 mt-3">
+          <a
+            href={qrUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm text-rosa-dark underline"
+          >
+            Ver vista de clienta
+          </a>
+          <BotonCompartir url={qrUrl} />
+        </div>
       </div>
 
       {/* Historial */}

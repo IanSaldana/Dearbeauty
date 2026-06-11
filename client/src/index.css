@@ -6,3 +6,7 @@
   --color-dorado: #C9A96E;
   --color-dorado-light: #E8D5A3;
 }
+
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}

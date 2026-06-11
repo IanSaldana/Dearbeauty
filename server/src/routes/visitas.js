@@ -143,8 +143,30 @@ router.post('/marcar', authMiddleware, visitaLimiter, async (req, res) => {
 // GET /api/visitas/recientes - Últimas visitas registradas
 router.get('/recientes', authMiddleware, async (req, res) => {
   try {
+    const limite = Math.min(parseInt(req.query.limite) || 50, 100);
+    const periodo = req.query.periodo; // hoy, semana, mes
+
+    const where = {};
+    if (periodo) {
+      const ahora = new Date();
+      let desde;
+      if (periodo === 'hoy') {
+        desde = new Date(ahora.getFullYear(), ahora.getMonth(), ahora.getDate());
+      } else if (periodo === 'semana') {
+        desde = new Date(ahora);
+        desde.setDate(desde.getDate() - desde.getDay());
+        desde.setHours(0, 0, 0, 0);
+      } else if (periodo === 'mes') {
+        desde = new Date(ahora.getFullYear(), ahora.getMonth(), 1);
+      }
+      if (desde) {
+        where.fecha = { gte: desde };
+      }
+    }
+
     const visitas = await prisma.visita.findMany({
-      take: 20,
+      where,
+      take: limite,
       orderBy: { fecha: 'desc' },
       include: {
         tarjeta: {

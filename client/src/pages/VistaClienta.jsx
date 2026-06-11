@@ -30,7 +30,8 @@ export default function VistaClienta() {
       <div className="max-w-sm mx-auto space-y-6">
         {/* Header */}
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-rosa-dark">💅 Dear Beauty</h1>
+          <img src="/icon-192.png" alt="Dear Beauty" className="w-16 h-16 mx-auto mb-1" />
+          <h1 className="text-2xl font-bold text-rosa-dark">Dear Beauty</h1>
           <p className="text-gray-500 text-sm">Tarjeta de Fidelidad</p>
         </div>
 

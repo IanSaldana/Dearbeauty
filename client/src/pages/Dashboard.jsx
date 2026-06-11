@@ -83,7 +83,10 @@ export default function Dashboard() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-lg font-bold text-gray-800">💅 Dear Beauty</h1>
+          <h1 className="text-lg font-bold text-gray-800 flex items-center gap-2">
+            <img src="/icon-192.png" alt="" className="w-8 h-8" />
+            Dear Beauty
+          </h1>
           <p className="text-xs text-gray-400">Hola, {manicurista?.nombre}</p>
         </div>
         <button

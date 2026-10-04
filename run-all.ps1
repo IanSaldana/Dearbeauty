@@ -47,14 +47,18 @@ $backend = Start-Process -FilePath "cmd.exe" -ArgumentList "/c node src/index.js
 Start-Sleep -Seconds 2
 
 # Iniciar Frontend (Vite + React)
-Write-Host ">> Iniciando Frontend (puerto 5173)..." -ForegroundColor Cyan
+Write-Host ">> Iniciando Frontend (puerto 5173, HTTPS)..." -ForegroundColor Cyan
 $frontend = Start-Process -FilePath "cmd.exe" -ArgumentList "/c npm run dev" -WorkingDirectory "$PSScriptRoot\client" -PassThru
 Start-Sleep -Seconds 2
 
 Write-Host ""
 Write-Host "=== Servicios iniciados ===" -ForegroundColor Green
 Write-Host "  Backend:  http://localhost:3001" -ForegroundColor Yellow
-Write-Host "  Frontend: http://localhost:5173" -ForegroundColor Yellow
+Write-Host "  Frontend: https://localhost:5173" -ForegroundColor Yellow
+Write-Host ""
+Write-Host "El dev server usa HTTPS porque la camara exige contexto seguro." -ForegroundColor DarkGray
+Write-Host "En el celular por LAN el certificado es autofirmado: aceptalo y prueba" -ForegroundColor DarkGray
+Write-Host "el escaner con un tunel HTTPS (cloudflared/ngrok) o no funcionara." -ForegroundColor DarkGray
 Write-Host ""
 Write-Host "Login: cata.saldivialanyon@gmail.com / admin123" -ForegroundColor Gray
 Write-Host ""

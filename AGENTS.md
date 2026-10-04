@@ -12,7 +12,7 @@ cd client && npm install
 # desarrollo
 .\run-all.ps1              # desde la raíz: verifica el servicio de Postgres, aplica migraciones y levanta ambos
 cd server && npm run dev   # nodemon, puerto 3001
-cd client && npm run dev   # vite --host, puerto 5173
+cd client && npm run dev   # vite --host, HTTPS en 5173 (basicSsl: la cámara exige contexto seguro)
 ```
 
 - `server` **no tiene script de test ni de lint**. En `client`, el lint es `npm run lint` (`eslint .`).
@@ -33,6 +33,13 @@ cd client && npm run dev   # vite --host, puerto 5173
 
 `docs/README.md` está desactualizado: dice React 18, hosting en Railway, y omite `citas`, `fecha_nacimiento` y los eventos de cumpleaños/vencimiento. Confía en `server/.env`, `server/src/index.js` y el schema de Prisma por encima del README. Hoy no hay despliegue a producción.
 
+## Pendiente de deploy (bloqueante para el enlace público)
+
+El QR que la clienta recibe es `/clienta/:qrCode`. La app usa `BrowserRouter` y `server/src/index.js`
+**no sirve el front ni tiene fallback SPA**, así que ese enlace da **404 en cualquier host** hasta que se
+elija dónde desplegar y se configure el rewrite a `index.html` (Netlify `_redirects`, Vercel `vercel.json`,
+o `app.get('*')` si el server sirve el `dist/`). Es lo primero que hay que resolver antes de production.
+
 ## Notas de arquitectura
 
 - Puntos de entrada: `server/src/index.js` (Express, puerto 3001) y `client/src/App.jsx` (todas las rutas están definidas ahí mismo; no hay archivos de rutas).
@@ -44,6 +51,8 @@ cd client && npm run dev   # vite --host, puerto 5173
 - El endpoint público `/api/public/clienta/:qrCode` (`server/src/index.js:30`) omite teléfono/email a propósito. Mantenlo así.
 - Las fechas de `Cita` y `fecha_nacimiento` son **valores de solo fecha anclados a UTC** — el client manda `YYYY-MM-DD`, el server hace `new Date(str + 'T00:00:00.000Z')`, y el render usa `toLocaleDateString('es-CL', { timeZone: 'UTC' })` (`server/src/lib/eventos.js:10`, `client/src/components/DatePicker.jsx`). No las parses con `new Date()` en hora local o los cumpleaños se corren un día.
 - El `POST /register` de `server/src/routes/auth.js` **no tiene guard de auth** y está expuesto públicamente. No lo reutilices para flujos de registro nuevos sin agregarle uno.
+- `client/src/components/Navbar.jsx` fue eliminado: estaba muerto (nadie lo importaba) y su botón "Salir" medía 24px de alto. El logout real vive en `Dashboard.jsx`.
+- `client/src/services/api.js` tiene `timeout: 10000` y normaliza los fallos de red en `error.mensajeUI`. Usa `mensajeDeError(err)` y `esNoEncontrado(err)` en vez de leer `err.response` a mano: `DetalleClienta` distingue 404 real de caída de red con el segundo.
 
 ## Sistema de diseño
 

@@ -2,32 +2,30 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 
 const DIAS_SEMANA = ['Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sá', 'Do'];
 const MESES = [
-  'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+  'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junzo',
   'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
 ];
 
-function toISODate(d) {
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${y}-${m}-${day}`;
+const FOCALIZABLES =
+  'button:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
+/* La fecha es un valor de solo fecha anclado a UTC en todo el proyecto:
+   se construye y se lee en UTC o el cumpleaños se corre un día. */
+function isoDe(y, mes, dia) {
+  return `${y}-${String(mes + 1).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
 }
 
 function parseISODate(value) {
   if (!value) return null;
   const [y, m, d] = value.split('-').map(Number);
   if (!y || !m || !d) return null;
-  return new Date(y, m - 1, d);
+  return new Date(Date.UTC(y, m - 1, d));
 }
 
 function formatDisplay(value) {
   const d = parseISODate(value);
   if (!d) return '';
-  return d.toLocaleDateString('es-CL', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  });
+  return `${d.getUTCDate()} de ${MESES[d.getUTCMonth()].toLowerCase()} ${d.getUTCFullYear()}`;
 }
 
 export default function DatePicker({
@@ -41,43 +39,56 @@ export default function DatePicker({
   const [vista, setVista] = useState('cal'); // 'cal' (días) | 'selector' (año/mes)
   const [vistaMes, setVistaMes] = useState(() => {
     const base = parseISODate(value) || new Date();
-    return { anio: base.getFullYear(), mes: base.getMonth() };
+    return { anio: base.getUTCFullYear(), mes: base.getUTCMonth() };
   });
-  const containerRef = useRef(null);
+  const panelRef = useRef(null);
+  const gatilloRef = useRef(null);
 
+  /* "Hoy" es hoy en el huso de la manicurista, no en UTC */
   const hoy = new Date();
-  const hoyISO = toISODate(hoy);
+  const hoyISO = isoDe(hoy.getFullYear(), hoy.getMonth(), hoy.getDate());
+
+  const cerrar = () => {
+    setOpen(false);
+    setVista('cal');
+  };
 
   useEffect(() => {
     if (!open) return;
-    const onPointerDown = (e) => {
-      if (containerRef.current && !containerRef.current.contains(e.target)) {
-        setOpen(false);
-        setVista('cal');
-      }
-    };
-    const onKey = (e) => {
+
+    const panel = panelRef.current;
+    panel?.querySelector(FOCALIZABLES)?.focus();
+
+    const alPresionar = (e) => {
       if (e.key === 'Escape') {
-        setOpen(false);
-        setVista('cal');
+        cerrar();
+        gatilloRef.current?.focus();
+        return;
+      }
+      if (e.key !== 'Tab' || !panel) return;
+      const focales = Array.from(panel.querySelectorAll(FOCALIZABLES));
+      if (focales.length === 0) return;
+      const primero = focales[0];
+      const ultimo = focales[focales.length - 1];
+      if (e.shiftKey && document.activeElement === primero) {
+        e.preventDefault();
+        ultimo.focus();
+      } else if (!e.shiftKey && document.activeElement === ultimo) {
+        e.preventDefault();
+        primero.focus();
       }
     };
-    document.addEventListener('mousedown', onPointerDown);
-    document.addEventListener('touchstart', onPointerDown);
-    document.addEventListener('keydown', onKey);
-    return () => {
-      document.removeEventListener('mousedown', onPointerDown);
-      document.removeEventListener('touchstart', onPointerDown);
-      document.removeEventListener('keydown', onKey);
-    };
+
+    document.addEventListener('keydown', alPresionar);
+    return () => document.removeEventListener('keydown', alPresionar);
   }, [open]);
 
   const celdaPrimerDia = useMemo(() => {
-    const primero = new Date(vistaMes.anio, vistaMes.mes, 1);
-    return (primero.getDay() + 6) % 7;
+    const primero = new Date(Date.UTC(vistaMes.anio, vistaMes.mes, 1));
+    return (primero.getUTCDay() + 6) % 7;
   }, [vistaMes]);
 
-  const diasEnMes = new Date(vistaMes.anio, vistaMes.mes + 1, 0).getDate();
+  const diasEnMes = new Date(Date.UTC(vistaMes.anio, vistaMes.mes + 1, 0)).getUTCDate();
 
   const cambiarMes = (dir) => {
     setVistaMes((prev) => {
@@ -91,21 +102,23 @@ export default function DatePicker({
 
   const esFuturo = (dia) => {
     if (!disableFuture) return false;
-    const fecha = new Date(vistaMes.anio, vistaMes.mes, dia);
-    return fecha > hoy;
+    return (
+      Date.UTC(vistaMes.anio, vistaMes.mes, dia) >
+      Date.UTC(hoy.getFullYear(), hoy.getMonth(), hoy.getDate())
+    );
   };
 
   const seleccionar = (dia) => {
-    onChange(toISODate(new Date(vistaMes.anio, vistaMes.mes, dia)));
-    setOpen(false);
+    onChange(isoDe(vistaMes.anio, vistaMes.mes, dia));
+    cerrar();
+    gatilloRef.current?.focus();
   };
 
   const irAHoy = () => {
-    const d = new Date();
-    setVistaMes({ anio: d.getFullYear(), mes: d.getMonth() });
+    setVistaMes({ anio: hoy.getFullYear(), mes: hoy.getMonth() });
   };
 
-  // Bloque de años visible en el selector (12 años alineados por década)
+  /* Bloque de años alineado por década */
   const anioBaseRango = Math.floor(vistaMes.anio / 10) * 10;
   const aniosRango = Array.from({ length: 12 }, (_, i) => anioBaseRango + i);
 
@@ -113,36 +126,36 @@ export default function DatePicker({
     setVistaMes((prev) => ({ ...prev, anio: prev.anio + dir * 10 }));
   };
 
-  const elegirAnio = (anio) => {
-    setVistaMes((prev) => ({ ...prev, anio }));
-  };
-
+  const elegirAnio = (anio) => setVistaMes((prev) => ({ ...prev, anio }));
   const elegirMes = (mes) => {
     setVistaMes((prev) => ({ ...prev, mes }));
     setVista('cal');
   };
 
-  const abrirSelector = () => setVista('selector');
+  const navBtn =
+    'w-11 h-11 flex items-center justify-center rounded-lg text-gray-700 transition-colors hover:bg-rosa/40 active:bg-rosa/60';
+  const celdaBase = 'min-h-11 text-sm rounded-lg transition-colors';
+  const vinculo = 'min-h-11 px-2 text-xs font-medium text-rosa-ink underline-offset-2 hover:underline';
 
   return (
-    <div className="relative" ref={containerRef}>
+    <div className="relative">
       <button
+        ref={gatilloRef}
         type="button"
         onClick={() => {
           const base = parseISODate(value) || new Date();
-          setVistaMes({ anio: base.getFullYear(), mes: base.getMonth() });
+          setVistaMes({ anio: base.getUTCFullYear(), mes: base.getUTCMonth() });
           setVista('cal');
           setOpen((o) => !o);
         }}
         aria-haspopup="dialog"
         aria-expanded={open}
         aria-label={ariaLabel}
-        aria-invalid={false}
         className={`
-          w-full px-4 py-2.5 rounded-lg text-left flex items-center justify-between gap-2
-          border border-gray-200 bg-white transition
+          w-full min-h-11 px-4 py-2.5 rounded-lg text-left flex items-center justify-between gap-2
+          border transition-colors
           focus:outline-none focus:ring-2 focus:ring-rosa-ink/40 focus:border-rosa-ink/40
-          ${value ? 'text-gray-800' : 'text-gray-400'}
+          ${value ? 'text-gray-800 border-gray-300 bg-white' : 'text-gray-500 border-gray-300 bg-white'}
         `}
       >
         <span className="truncate">{value ? formatDisplay(value) : placeholder}</span>
@@ -155,175 +168,163 @@ export default function DatePicker({
       </button>
 
       {open && (
+        /* Bottom sheet en móvil: el popover absoluto quedaba detrás del teclado */
         <div
-          role="dialog"
-          aria-label={ariaLabel || 'Selector de fecha'}
-          className="absolute left-0 right-0 z-30 mt-2 bg-white rounded-2xl shadow-xl border border-rosa-dark/20 p-3 w-full max-w-xs"
+          className="fixed inset-0 z-40 flex items-end sm:items-center sm:justify-center bg-gray-900/40"
+          onMouseDown={(e) => {
+            if (e.target === e.currentTarget) cerrar();
+          }}
         >
-          {/* Selector de año y mes */}
-          {vista === 'selector' ? (
-            <div>
-              {/* Cabecera con navegación por décadas */}
-              <div className="flex items-center justify-between mb-2">
-                <button
-                  type="button"
-                  onClick={() => cambiarDecada(-1)}
-                  aria-label="Década anterior"
-                  className="w-9 h-9 flex items-center justify-center rounded-lg text-gray-600 hover:bg-rosa/40 hover:text-rosa-ink transition"
-                >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6" /></svg>
-                </button>
-                <div className="text-center">
-                  <p className="text-sm font-bold text-gray-800">
-                    {anioBaseRango} — {anioBaseRango + 11}
-                  </p>
+          <div
+            ref={panelRef}
+            role="dialog"
+            aria-modal="true"
+            aria-label={ariaLabel || 'Selector de fecha'}
+            className="bg-white w-full sm:max-w-xs rounded-t-2xl sm:rounded-2xl shadow-lg border border-rosa-dark/20 p-3 max-h-[85dvh] overflow-y-auto safe-bottom"
+          >
+            {vista === 'selector' ? (
+              <div>
+                <div className="flex items-center justify-between mb-2">
                   <button
                     type="button"
-                    onClick={() => setVista('cal')}
-                    className="text-[10px] font-medium text-rosa-ink underline-offset-2 hover:underline mt-0.5"
+                    onClick={() => cambiarDecada(-1)}
+                    aria-label="Década anterior"
+                    className={navBtn}
                   >
-                    ← Volver al calendario
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6" /></svg>
+                  </button>
+                  <div className="text-center">
+                    <p className="text-sm font-bold text-gray-800">
+                      {anioBaseRango} — {anioBaseRango + 11}
+                    </p>
+                    <button type="button" onClick={() => setVista('cal')} className={vinculo}>
+                      Volver al calendario
+                    </button>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => cambiarDecada(1)}
+                    aria-label="Década siguiente"
+                    className={navBtn}
+                  >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18l6-6-6-6" /></svg>
                   </button>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => cambiarDecada(1)}
-                  aria-label="Década siguiente"
-                  className="w-9 h-9 flex items-center justify-center rounded-lg text-gray-600 hover:bg-rosa/40 hover:text-rosa-ink transition"
-                >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18l6-6-6-6" /></svg>
-                </button>
-              </div>
 
-              {/* Años */}
-              <div className="grid grid-cols-4 gap-1.5 mb-3">
-                {aniosRango.map((anio) => {
-                  const esAnioActivo = anio === vistaMes.anio;
-                  return (
+                <div className="grid grid-cols-4 gap-1.5 mb-3">
+                  {aniosRango.map((anio) => (
                     <button
                       key={anio}
                       type="button"
                       onClick={() => elegirAnio(anio)}
-                      aria-pressed={esAnioActivo}
-                      className={`h-9 text-sm rounded-lg transition-colors ${
-                        esAnioActivo
+                      aria-pressed={anio === vistaMes.anio}
+                      className={`${celdaBase} ${
+                        anio === vistaMes.anio
                           ? 'bg-rosa-ink text-white font-semibold shadow-sm'
-                          : 'text-gray-700 hover:bg-rosa/40'
+                          : 'text-gray-700 hover:bg-rosa/40 active:bg-rosa/60'
                       }`}
                     >
                       {anio}
                     </button>
-                  );
-                })}
-              </div>
+                  ))}
+                </div>
 
-              {/* Meses */}
-              <div className="grid grid-cols-4 gap-1.5">
-                {MESES.map((nombreMes, idx) => {
-                  const esMesActivo = idx === vistaMes.mes;
-                  return (
+                <div className="grid grid-cols-4 gap-1.5">
+                  {MESES.map((nombreMes, idx) => (
                     <button
                       key={idx}
                       type="button"
                       onClick={() => elegirMes(idx)}
-                      className={`h-9 text-xs rounded-lg transition-colors ${
-                        esMesActivo
+                      aria-pressed={idx === vistaMes.mes}
+                      className={`${celdaBase} text-xs ${
+                        idx === vistaMes.mes
                           ? 'bg-rosa-ink text-white font-semibold shadow-sm'
-                          : 'text-gray-700 hover:bg-rosa/40'
+                          : 'text-gray-700 hover:bg-rosa/40 active:bg-rosa/60'
                       }`}
                     >
                       {nombreMes.slice(0, 3)}
                     </button>
-                  );
-                })}
+                  ))}
+                </div>
               </div>
-            </div>
-          ) : (
-          <>
-          {/* Cabecera de mes */}
-          <div className="flex items-center justify-between mb-2">
-            <button
-              type="button"
-              onClick={() => cambiarMes(-1)}
-              aria-label="Mes anterior"
-              className="w-9 h-9 flex items-center justify-center rounded-lg text-gray-600 hover:bg-rosa/40 hover:text-rosa-ink transition"
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6" /></svg>
-            </button>
-            <div className="text-center">
-              <button
-                type="button"
-                onClick={abrirSelector}
-                aria-label="Elegir año y mes"
-                className="text-sm font-bold text-gray-800 hover:text-rosa-ink transition"
-              >
-                {MESES[vistaMes.mes]} {vistaMes.anio}
-              </button>
-              <br />
-              <button
-                type="button"
-                onClick={irAHoy}
-                className="text-[10px] font-medium text-rosa-ink underline-offset-2 hover:underline mt-0.5"
-              >
-                Ir a hoy
-              </button>
-            </div>
-            <button
-              type="button"
-              onClick={() => cambiarMes(1)}
-              aria-label="Mes siguiente"
-              className="w-9 h-9 flex items-center justify-center rounded-lg text-gray-600 hover:bg-rosa/40 hover:text-rosa-ink transition"
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18l6-6-6-6" /></svg>
-            </button>
-          </div>
+            ) : (
+              <>
+                <div className="flex items-center justify-between mb-2">
+                  <button
+                    type="button"
+                    onClick={() => cambiarMes(-1)}
+                    aria-label="Mes anterior"
+                    className={navBtn}
+                  >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6" /></svg>
+                  </button>
+                  <div className="text-center">
+                    <button
+                      type="button"
+                      onClick={() => setVista('selector')}
+                      aria-label="Elegir año y mes"
+                      className="min-h-11 text-sm font-bold text-gray-800 transition-colors hover:text-rosa-ink"
+                    >
+                      {MESES[vistaMes.mes]} {vistaMes.anio}
+                    </button>
+                    <button type="button" onClick={irAHoy} className={`${vinculo} -mt-1`}>
+                      Ir a hoy
+                    </button>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => cambiarMes(1)}
+                    aria-label="Mes siguiente"
+                    className={navBtn}
+                  >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18l6-6-6-6" /></svg>
+                  </button>
+                </div>
 
-          {/* Días de la semana */}
-          <div className="grid grid-cols-7 gap-1 mb-1">
-            {DIAS_SEMANA.map((d) => (
-              <div key={d} className="text-center text-[10px] font-semibold text-gray-500 py-1">
-                {d}
-              </div>
-            ))}
-          </div>
+                <div className="grid grid-cols-7 gap-1 mb-1">
+                  {DIAS_SEMANA.map((d) => (
+                    <div key={d} className="text-center text-xs font-semibold text-gray-600 py-1">
+                      {d}
+                    </div>
+                  ))}
+                </div>
 
-          {/* Días del mes */}
-          <div className="grid grid-cols-7 gap-1">
-            {Array.from({ length: celdaPrimerDia }).map((_, i) => (
-              <div key={`empty-${i}`} />
-            ))}
-            {Array.from({ length: diasEnMes }).map((_, i) => {
-              const dia = i + 1;
-              const iso = toISODate(new Date(vistaMes.anio, vistaMes.mes, dia));
-              const seleccionado = iso === value;
-              const esHoy = iso === hoyISO;
-              const futuro = esFuturo(dia);
-              return (
-                <button
-                  key={dia}
-                  type="button"
-                  disabled={futuro}
-                  onClick={() => seleccionar(dia)}
-                  aria-label={`${dia} de ${MESES[vistaMes.mes]}`}
-                  aria-pressed={seleccionado}
-                  className={`
-                    h-9 text-sm rounded-lg transition-colors
-                    ${futuro
-                      ? 'text-gray-300 cursor-not-allowed'
-                      : seleccionado
-                      ? 'bg-rosa-ink text-white font-semibold shadow-sm'
-                      : esHoy
-                      ? 'bg-rosa/60 text-rosa-ink font-semibold'
-                      : 'text-gray-700 hover:bg-rosa/40'}
-                  `}
-                >
-                  {dia}
-                </button>
-              );
-            })}
+                <div className="grid grid-cols-7 gap-1">
+                  {Array.from({ length: celdaPrimerDia }).map((_, i) => (
+                    <div key={`empty-${i}`} />
+                  ))}
+                  {Array.from({ length: diasEnMes }).map((_, i) => {
+                    const dia = i + 1;
+                    const iso = isoDe(vistaMes.anio, vistaMes.mes, dia);
+                    const seleccionado = iso === value;
+                    const esHoy = iso === hoyISO;
+                    const futuro = esFuturo(dia);
+                    return (
+                      <button
+                        key={dia}
+                        type="button"
+                        disabled={futuro}
+                        onClick={() => seleccionar(dia)}
+                        aria-label={`${dia} de ${MESES[vistaMes.mes]}`}
+                        aria-pressed={seleccionado}
+                        className={`${celdaBase} ${
+                          futuro
+                            ? 'text-gray-400 cursor-not-allowed'
+                            : seleccionado
+                            ? 'bg-rosa-ink text-white font-semibold shadow-sm'
+                            : esHoy
+                            ? 'bg-rosa/70 text-rosa-ink font-semibold'
+                            : 'text-gray-700 hover:bg-rosa/40 active:bg-rosa/60'
+                        }`}
+                      >
+                        {dia}
+                      </button>
+                    );
+                  })}
+                </div>
+              </>
+            )}
           </div>
-          </>
-          )}
         </div>
       )}
     </div>

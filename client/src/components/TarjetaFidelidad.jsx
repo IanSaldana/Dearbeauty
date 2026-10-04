@@ -1,9 +1,14 @@
-export default function TarjetaFidelidad({ visitas = 0, totalVisitas = 10 }) {
-  const recompensas = {
-    5: { label: 'REGALO', icon: '🎁' },
-    7: { label: '15% OFF', icon: '💰' },
-    10: { label: 'GRATIS', icon: '⭐' },
-  };
+const recompensas = {
+  5: { label: 'REGALO', icono: '🎁' },
+  7: { label: '15% OFF', icono: '💰' },
+  10: { label: 'GRATIS', icono: '⭐' },
+};
+
+export default function TarjetaFidelidad({ visitas = 0, totalVisitas = 10, animar = false }) {
+  const selloPremio = Math.min(
+    totalVisitas,
+    recompensas[Object.keys(recompensas).find((n) => Number(n) > visitas)] || totalVisitas
+  );
 
   return (
     <div className="bg-rosa/60 rounded-2xl shadow-lg p-5 border border-rosa-dark/10">
@@ -12,13 +17,24 @@ export default function TarjetaFidelidad({ visitas = 0, totalVisitas = 10 }) {
         <h3 className="text-2xl font-black text-rosa-ink tracking-wide uppercase">
           Tarjeta de Fidelidad
         </h3>
-        <p className="text-xs text-gray-600 mt-1">
+        <p className="text-sm text-gray-700 mt-1">
           Obtén un <strong>servicio a elección GRATIS</strong> a tu 10ma visita
         </p>
       </div>
 
+      {/* Sello de progreso: el número que la clienta busca de un vistazo */}
+      <p className="text-center text-sm text-rosa-ink font-medium mt-3">
+        {visitas} de {totalVisitas} visitas
+        {visitas < totalVisitas && (
+          <span className="text-gray-700 font-normal">
+            {' · te falta la '}
+            <span className="font-semibold">{selloPremio}</span>
+          </span>
+        )}
+      </p>
+
       {/* Círculos - 2 filas de 5 */}
-      <div className="grid grid-cols-5 gap-3 mt-4">
+      <div className="grid grid-cols-5 gap-2 sm:gap-3 mt-4">
         {Array.from({ length: totalVisitas }, (_, i) => {
           const numero = i + 1;
           const completada = numero <= visitas;
@@ -34,23 +50,23 @@ export default function TarjetaFidelidad({ visitas = 0, totalVisitas = 10 }) {
               <div
                 role="img"
                 aria-label={etiqueta}
-                title={etiqueta}
                 className={`
-                  w-12 h-12 rounded-full flex items-center justify-center
+                  w-14 h-14 rounded-full flex items-center justify-center
                   border-2 transition-colors duration-300 motion-reduce:transition-none
                   ${esPremio
-                    ? 'bg-dorado border-dorado text-white'
+                    ? 'bg-dorado border-dorado-ink/40'
                     : completada
-                    ? 'bg-rosa-dark border-rosa-dark text-white'
-                    : 'bg-white border-gray-800/70 text-gray-700'}
+                    ? 'bg-rosa-ink border-rosa-ink text-white'
+                    : 'bg-white border-gray-700 text-gray-700'}
+                  ${animar && completada ? 'animar-sello' : ''}
                 `}
               >
                 {esPremio ? (
-                  <span className="text-lg" aria-hidden="true">{recompensa.icon}</span>
+                  <span className="text-2xl leading-none" aria-hidden="true">{recompensa.icono}</span>
                 ) : completada ? (
-                  <span className="text-lg" aria-hidden="true">✓</span>
+                  <span className="text-2xl leading-none" aria-hidden="true">✓</span>
                 ) : recompensa ? (
-                  <span className="text-[9px] font-bold text-center leading-tight italic">
+                  <span className="text-xs font-bold text-center leading-tight italic text-gray-700">
                     {recompensa.label}
                   </span>
                 ) : null}
@@ -61,7 +77,7 @@ export default function TarjetaFidelidad({ visitas = 0, totalVisitas = 10 }) {
       </div>
 
       {/* Pie */}
-      <p className="text-center text-[9px] text-gray-500 mt-4 leading-snug">
+      <p className="text-center text-xs text-gray-600 mt-4 leading-snug">
         *Debes presentar esta tarjeta para obtener los regalos/descuentos.<br />
         Duración: 1 año desde tu primera cita.
       </p>

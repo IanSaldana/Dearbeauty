@@ -9,7 +9,10 @@ const tabs = [
 
 export default function BottomNav() {
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-rosa-dark/20 z-50 safe-bottom">
+    <nav
+      aria-label="Navegación principal"
+      className="fixed bottom-0 left-0 right-0 bg-white border-t border-rosa-dark/20 z-50 safe-bottom"
+    >
       <div className="max-w-lg mx-auto flex justify-around items-center h-16">
         {tabs.map((tab) => (
           <NavLink
@@ -20,12 +23,12 @@ export default function BottomNav() {
               `flex flex-col items-center justify-center flex-1 h-full transition-colors ${
                 isActive
                   ? 'text-rosa-ink font-semibold'
-                  : 'text-gray-500 hover:text-rosa-ink/70'
+                  : 'text-gray-500 hover:text-rosa-ink/70 active:text-rosa-ink/70'
               }`
             }
           >
             <span className="text-xl leading-none" aria-hidden="true">{tab.icon}</span>
-            <span className="text-[10px] mt-1">{tab.label}</span>
+            <span className="text-xs mt-1 leading-tight">{tab.label}</span>
           </NavLink>
         ))}
       </div>

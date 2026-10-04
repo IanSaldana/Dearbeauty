@@ -64,6 +64,7 @@ export default function Dashboard() {
   const inicioSemana = new Date();
   inicioSemana.setDate(inicioSemana.getDate() - inicioSemana.getDay());
   inicioSemana.setHours(0, 0, 0, 0);
+  const semanaLunes = getLunesDeSemana();
   const visitasEstaSemana = visitasRecientes.filter(
     (v) => new Date(v.fecha) >= inicioSemana
   );
@@ -87,11 +88,11 @@ export default function Dashboard() {
             <img src="/icon-192.png" alt="" className="w-8 h-8" />
             Dear Beauty
           </h1>
-          <p className="text-xs text-gray-400">Hola, {manicurista?.nombre}</p>
+          <p className="text-xs text-gray-500">Hola, {manicurista?.nombre}</p>
         </div>
         <button
           onClick={() => { logout(); window.location.href = '/login'; }}
-          className="text-xs text-gray-400 hover:text-rosa-dark"
+          className="text-xs text-gray-500 hover:text-rosa-ink"
         >
           Salir
         </button>
@@ -101,13 +102,13 @@ export default function Dashboard() {
       <div className="grid grid-cols-2 gap-3">
         <Link
           to="/escanear"
-          className="bg-rosa-dark text-white rounded-xl p-4 text-center font-medium hover:bg-rosa-dark/90 transition shadow-sm"
+          className="bg-rosa-ink text-white rounded-xl p-4 text-center font-medium hover:bg-rosa-ink/90 transition shadow-sm"
         >
           📷 Escanear QR
         </Link>
         <Link
           to="/registrar"
-          className="bg-dorado text-white rounded-xl p-4 text-center font-medium hover:bg-dorado/90 transition shadow-sm"
+          className="bg-dorado-ink text-white rounded-xl p-4 text-center font-medium hover:bg-dorado-ink/90 transition shadow-sm"
         >
           ➕ Nueva Clienta
         </Link>
@@ -116,15 +117,15 @@ export default function Dashboard() {
       {/* Resumen rápido */}
       <div className="grid grid-cols-3 gap-3">
         <div className="bg-white rounded-xl p-3 text-center shadow-sm">
-          <p className="text-2xl font-bold text-rosa-dark">{clientas.length}</p>
+          <p className="text-2xl font-bold text-rosa-ink">{clientas.length}</p>
           <p className="text-[10px] text-gray-500">Clientas activas</p>
         </div>
         <div className="bg-white rounded-xl p-3 text-center shadow-sm">
-          <p className="text-2xl font-bold text-dorado">{visitasEstaSemana.length}</p>
+          <p className="text-2xl font-bold text-dorado-ink">{visitasEstaSemana.length}</p>
           <p className="text-[10px] text-gray-500">Visitas esta semana</p>
         </div>
         <div className="bg-white rounded-xl p-3 text-center shadow-sm">
-          <p className="text-2xl font-bold text-red-400">{tarjetasPorVencer.length}</p>
+          <p className="text-2xl font-bold text-red-600">{tarjetasPorVencer.length}</p>
           <p className="text-[10px] text-gray-500">Por vencer</p>
         </div>
       </div>
@@ -133,13 +134,13 @@ export default function Dashboard() {
       <div className="bg-white rounded-xl shadow-sm p-4">
         <div className="flex items-center justify-between mb-3">
           <h2 className="font-semibold text-gray-800">📅 Esta semana</h2>
-          <Link to="/calendario" className="text-xs text-rosa-dark font-medium">
+          <Link to="/calendario" className="text-xs text-rosa-ink font-medium">
             Ver calendario →
           </Link>
         </div>
         <div className="grid grid-cols-7 gap-1">
           {DIAS_CORTOS.map((nombre, i) => {
-            const lunes = getLunesDeSemana();
+            const lunes = semanaLunes;
             const dia = new Date(lunes);
             dia.setDate(lunes.getDate() + i);
             const diaNum = dia.getDate();
@@ -151,21 +152,21 @@ export default function Dashboard() {
             });
             return (
               <div key={i} className={`text-center rounded-lg p-1.5 ${esHoy ? 'bg-rosa/40' : ''}`}>
-                <p className="text-[10px] text-gray-400 font-medium">{nombre}</p>
-                <p className={`text-sm font-bold ${esHoy ? 'text-rosa-dark' : 'text-gray-700'}`}>{diaNum}</p>
+                <p className="text-[10px] text-gray-500 font-medium">{nombre}</p>
+                <p className={`text-sm font-bold ${esHoy ? 'text-rosa-ink' : 'text-gray-700'}`}>{diaNum}</p>
                 {citasDia.length > 0 ? (
                   <div className="mt-1 space-y-0.5">
                     {citasDia.slice(0, 2).map((c) => (
-                      <p key={c.id} className="text-[9px] text-rosa-dark truncate leading-tight">
+                      <p key={c.id} className="text-[9px] text-rosa-ink truncate leading-tight">
                         {c.hora_inicio} {c.clienta?.nombre || c.titulo}
                       </p>
                     ))}
                     {citasDia.length > 2 && (
-                      <p className="text-[9px] text-gray-400">+{citasDia.length - 2} más</p>
+                      <p className="text-[9px] text-gray-500">+{citasDia.length - 2} más</p>
                     )}
                   </div>
                 ) : (
-                  <p className="text-[9px] text-gray-300 mt-1">—</p>
+                  <p className="text-[9px] text-gray-500 mt-1">—</p>
                 )}
               </div>
             );
@@ -177,12 +178,12 @@ export default function Dashboard() {
       <div className="bg-white rounded-xl shadow-sm p-4">
         <div className="flex items-center justify-between mb-3">
           <h2 className="font-semibold text-gray-800">Visitas recientes</h2>
-          <Link to="/visitas" className="text-xs text-rosa-dark font-medium">
+          <Link to="/visitas" className="text-xs text-rosa-ink font-medium">
             Ver todas →
           </Link>
         </div>
         {visitasRecientes.length === 0 ? (
-          <p className="text-sm text-gray-400">No hay visitas aún</p>
+          <p className="text-sm text-gray-500">No hay visitas aún</p>
         ) : (
           <ul className="space-y-2">
             {visitasRecientes.slice(0, 5).map((v) => (
@@ -193,15 +194,15 @@ export default function Dashboard() {
                   </span>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
-                  <span className="text-xs text-gray-400">
+                  <span className="text-xs text-gray-500">
                     {v.numero_visita}/10
                   </span>
                   {v.recompensa && (
-                    <span className="text-[10px] bg-dorado/20 text-dorado px-1.5 py-0.5 rounded-full">
+                    <span className="text-[10px] bg-dorado/20 text-dorado-ink px-1.5 py-0.5 rounded-full">
                       🎁
                     </span>
                   )}
-                  <span className="text-[10px] text-gray-300">
+                  <span className="text-[10px] text-gray-500">
                     {new Date(v.fecha).toLocaleDateString()}
                   </span>
                 </div>
@@ -216,7 +217,7 @@ export default function Dashboard() {
         <div className="bg-white rounded-xl shadow-sm p-4">
           <div className="flex items-center justify-between mb-3">
             <h2 className="font-semibold text-gray-800">⏰ Por vencer</h2>
-            <Link to="/clientas" className="text-xs text-rosa-dark font-medium">
+            <Link to="/clientas" className="text-xs text-rosa-ink font-medium">
               Ver todas →
             </Link>
           </div>
@@ -231,11 +232,11 @@ export default function Dashboard() {
                   >
                     <div>
                       <p className="font-medium text-gray-700">{c.nombre}</p>
-                      <p className="text-[10px] text-gray-400">
+                      <p className="text-[10px] text-gray-500">
                         Vence: {new Date(tarjeta.fecha_vencimiento).toLocaleDateString()}
                       </p>
                     </div>
-                    <span className="text-xs text-rosa-dark font-semibold">
+                    <span className="text-xs text-rosa-ink font-semibold">
                       {tarjeta.visitas_completadas}/10
                     </span>
                   </Link>

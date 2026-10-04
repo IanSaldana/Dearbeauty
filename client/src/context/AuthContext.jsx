@@ -6,7 +6,7 @@ const AuthContext = createContext();
 export function AuthProvider({ children }) {
   const [token, setToken] = useState(localStorage.getItem('token'));
   const [manicurista, setManicurista] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(() => !!token);
 
   useEffect(() => {
     if (token) {
@@ -17,8 +17,6 @@ export function AuthProvider({ children }) {
           localStorage.removeItem('token');
         })
         .finally(() => setLoading(false));
-    } else {
-      setLoading(false);
     }
   }, [token]);
 

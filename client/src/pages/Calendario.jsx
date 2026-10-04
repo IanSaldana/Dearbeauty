@@ -17,6 +17,8 @@ export default function Calendario() {
   const [clientas, setClientas] = useState([]);
   const [busquedaClienta, setBusquedaClienta] = useState('');
   const [loading, setLoading] = useState(false);
+  const [modalError, setModalError] = useState('');
+  const [eliminarId, setEliminarId] = useState(null);
 
   const [form, setForm] = useState({
     titulo: '', fecha: '', hora_inicio: '', hora_fin: '', notas: '', clienta_id: null,
@@ -31,11 +33,23 @@ export default function Calendario() {
 
   // Cargar citas del día seleccionado
   useEffect(() => {
-    if (!diaSeleccionado) { setCitasDia([]); return; }
+    if (!diaSeleccionado) return;
     const fechaStr = `${mesActual.anio}-${String(mesActual.mes + 1).padStart(2, '0')}-${String(diaSeleccionado).padStart(2, '0')}`;
     api.get(`/citas?fecha=${fechaStr}`)
       .then((res) => setCitasDia(res.data));
   }, [diaSeleccionado, mesActual, citas]);
+
+  // Cerrar modales con Escape
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === 'Escape') {
+        setShowModal(false);
+        setEliminarId(null);
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
 
   // Generar grid del mes
   const primerDia = new Date(mesActual.anio, mesActual.mes, 1).getDay();
@@ -52,6 +66,7 @@ export default function Calendario() {
 
   const cambiarMes = (dir) => {
     setDiaSeleccionado(null);
+    setCitasDia([]);
     setMesActual((prev) => {
       let m = prev.mes + dir;
       let a = prev.anio;
@@ -66,6 +81,7 @@ export default function Calendario() {
     setForm({ titulo: '', fecha: fechaStr, hora_inicio: '', hora_fin: '', notas: '', clienta_id: null });
     setEditandoCita(null);
     setBusquedaClienta('');
+    setModalError('');
     setShowModal(true);
   };
 
@@ -81,12 +97,14 @@ export default function Calendario() {
     });
     setEditandoCita(cita);
     setBusquedaClienta(cita.clienta?.nombre || '');
+    setModalError('');
     setShowModal(true);
   };
 
   const guardarCita = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setModalError('');
     try {
       if (editandoCita) {
         await api.put(`/citas/${editandoCita.id}`, form);
@@ -99,21 +117,23 @@ export default function Calendario() {
       setCitas(res.data);
       setShowModal(false);
     } catch (err) {
-      alert(err.response?.data?.error || 'Error al guardar cita');
+      setModalError(err.response?.data?.error || 'Error al guardar cita');
     } finally {
       setLoading(false);
     }
   };
 
-  const eliminarCita = async (id) => {
-    if (!confirm('¿Eliminar esta cita?')) return;
+  const eliminarCita = async () => {
+    if (eliminarId == null) return;
     try {
-      await api.delete(`/citas/${id}`);
+      await api.delete(`/citas/${eliminarId}`);
       const mesStr = `${mesActual.anio}-${String(mesActual.mes + 1).padStart(2, '0')}`;
       const res = await api.get(`/citas?mes=${mesStr}`);
       setCitas(res.data);
-    } catch (err) {
-      alert('Error al eliminar');
+      setEliminarId(null);
+    } catch {
+      setEliminarId(null);
+      setModalError('Error al eliminar la cita');
     }
   };
 
@@ -137,11 +157,11 @@ export default function Calendario() {
     <div className="max-w-lg mx-auto px-4 py-6 pb-24 space-y-4">
       {/* Header mes */}
       <div className="flex items-center justify-between">
-        <button onClick={() => cambiarMes(-1)} className="p-2 text-gray-500 hover:text-rosa-dark text-lg">←</button>
+        <button onClick={() => cambiarMes(-1)} aria-label="Mes anterior" className="w-11 h-11 flex items-center justify-center text-gray-500 hover:text-rosa-ink text-lg">←</button>
         <h1 className="text-lg font-bold text-gray-800">
           {MESES[mesActual.mes]} {mesActual.anio}
         </h1>
-        <button onClick={() => cambiarMes(1)} className="p-2 text-gray-500 hover:text-rosa-dark text-lg">→</button>
+        <button onClick={() => cambiarMes(1)} aria-label="Mes siguiente" className="w-11 h-11 flex items-center justify-center text-gray-500 hover:text-rosa-ink text-lg">→</button>
       </div>
 
       {/* Grid calendario */}
@@ -149,7 +169,7 @@ export default function Calendario() {
         {/* Encabezado días */}
         <div className="grid grid-cols-7 gap-1 mb-1">
           {DIAS_SEMANA.map((d) => (
-            <div key={d} className="text-center text-[10px] font-medium text-gray-400 py-1">{d}</div>
+            <div key={d} className="text-center text-[10px] font-medium text-gray-500 py-1">{d}</div>
           ))}
         </div>
         {/* Días del mes */}
@@ -165,11 +185,12 @@ export default function Calendario() {
               <button
                 key={dia}
                 onClick={() => setDiaSeleccionado(dia)}
-                className={`relative h-9 rounded-lg text-sm font-medium transition ${
+                aria-label={`Día ${dia} de ${MESES[mesActual.mes]}`}
+                className={`relative h-11 rounded-lg text-sm font-medium transition-colors motion-reduce:transition-none ${
                   seleccionado
-                    ? 'bg-rosa-dark text-white'
+                    ? 'bg-rosa-ink text-white'
                     : esHoy(dia)
-                    ? 'bg-rosa/50 text-rosa-dark'
+                    ? 'bg-rosa/50 text-rosa-ink'
                     : 'hover:bg-gray-50 text-gray-700'
                 }`}
               >
@@ -194,28 +215,30 @@ export default function Calendario() {
             </h2>
             <button
               onClick={abrirNuevaCita}
-              className="w-8 h-8 bg-rosa-dark text-white rounded-full flex items-center justify-center text-lg hover:bg-rosa-dark/90 transition"
+              aria-label="Nueva cita"
+              className="w-11 h-11 bg-rosa-ink text-white rounded-full flex items-center justify-center text-lg hover:bg-rosa-ink/90 transition"
             >
               +
             </button>
           </div>
 
           {citasDia.length === 0 ? (
-            <p className="text-sm text-gray-400 text-center py-4">Sin citas este día</p>
+            <p className="text-sm text-gray-500 text-center py-4">Sin citas este día</p>
           ) : (
             <ul className="space-y-2">
               {citasDia.map((cita) => (
                 <li key={cita.id} className="flex items-start gap-3 p-2 rounded-lg hover:bg-rosa/10 transition">
                   <div className="flex-1 min-w-0" onClick={() => abrirEditarCita(cita)}>
                     <p className="text-sm font-medium text-gray-800 truncate">{cita.titulo}</p>
-                    <p className="text-xs text-gray-400">
+                    <p className="text-xs text-gray-500">
                       {cita.hora_inicio}{cita.hora_fin ? ` - ${cita.hora_fin}` : ''}
                       {cita.clienta && ` · ${cita.clienta.nombre}`}
                     </p>
                   </div>
                   <button
-                    onClick={() => eliminarCita(cita.id)}
-                    className="text-xs text-red-400 hover:text-red-600 shrink-0 p-1"
+                    onClick={() => { setModalError(''); setEliminarId(cita.id); }}
+                    aria-label={`Eliminar cita ${cita.titulo}`}
+                    className="w-10 h-10 flex items-center justify-center text-red-600 hover:text-red-700 shrink-0"
                   >
                     ✕
                   </button>
@@ -228,11 +251,22 @@ export default function Calendario() {
 
       {/* Modal crear/editar cita */}
       {showModal && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
+        <div
+          className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4"
+          role="dialog"
+          aria-modal="true"
+          aria-label={editandoCita ? 'Editar cita' : 'Nueva cita'}
+        >
           <div className="bg-white rounded-2xl p-5 max-w-sm w-full space-y-4 max-h-[90vh] overflow-y-auto">
             <h3 className="font-bold text-gray-800 text-center">
               {editandoCita ? 'Editar cita' : 'Nueva cita'}
             </h3>
+
+            {modalError && (
+              <div className="bg-red-50 text-red-700 text-sm p-3 rounded-lg">
+                {modalError}
+              </div>
+            )}
 
             <form onSubmit={guardarCita} className="space-y-3">
               <div>
@@ -293,7 +327,8 @@ export default function Calendario() {
                   <button
                     type="button"
                     onClick={() => { setForm({ ...form, clienta_id: null }); setBusquedaClienta(''); }}
-                    className="absolute right-2 top-7 text-xs text-gray-400 hover:text-red-400"
+                    aria-label="Quitar clienta seleccionada"
+                    className="absolute right-2 top-7 text-xs text-gray-500 hover:text-red-600"
                   >
                     ✕
                   </button>
@@ -327,19 +362,55 @@ export default function Calendario() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="flex-1 bg-rosa-dark text-white py-2 rounded-lg text-sm font-medium hover:bg-rosa-dark/90 transition disabled:opacity-50"
+                  className="flex-1 bg-rosa-ink text-white py-2 rounded-lg text-sm font-medium hover:bg-rosa-ink/90 transition disabled:opacity-50"
                 >
                   {loading ? 'Guardando...' : 'Guardar'}
                 </button>
                 <button
                   type="button"
-                  onClick={() => setShowModal(false)}
+                  onClick={() => { setShowModal(false); setModalError(''); }}
                   className="flex-1 bg-gray-100 text-gray-600 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 transition"
                 >
                   Cancelar
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal confirmar eliminación */}
+      {eliminarId != null && (
+        <div
+          className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Confirmar eliminación de cita"
+        >
+          <div className="bg-white rounded-2xl p-6 max-w-sm w-full space-y-4">
+            <h3 className="font-bold text-gray-800 text-center">¿Eliminar esta cita?</h3>
+            <p className="text-sm text-gray-500 text-center">
+              Esta acción no se puede deshacer.
+            </p>
+            {modalError && (
+              <div className="bg-red-50 text-red-700 text-sm p-3 rounded-lg">
+                {modalError}
+              </div>
+            )}
+            <div className="flex gap-2">
+              <button
+                onClick={eliminarCita}
+                className="flex-1 bg-red-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-red-700 transition"
+              >
+                Sí, eliminar
+              </button>
+              <button
+                onClick={() => setEliminarId(null)}
+                className="flex-1 bg-gray-100 text-gray-600 py-2 rounded-lg text-sm font-medium hover:bg-gray-200 transition"
+              >
+                Cancelar
+              </button>
+            </div>
           </div>
         </div>
       )}

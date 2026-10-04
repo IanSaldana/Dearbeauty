@@ -38,6 +38,7 @@ export default function Clientas() {
       <input
         type="text"
         placeholder="Buscar por nombre o teléfono..."
+        aria-label="Buscar clienta por nombre o teléfono"
         value={busqueda}
         onChange={(e) => setBusqueda(e.target.value)}
         className="w-full px-4 py-2 rounded-xl border border-rosa-dark/30 focus:outline-none focus:ring-2 focus:ring-rosa-dark/50 bg-white"
@@ -45,7 +46,7 @@ export default function Clientas() {
 
       {/* Lista */}
       {clientasOrdenadas.length === 0 ? (
-        <p className="text-sm text-gray-400 text-center py-8">
+        <p className="text-sm text-gray-500 text-center py-8">
           {busqueda ? 'Sin resultados' : 'No hay clientas registradas'}
         </p>
       ) : (
@@ -61,16 +62,16 @@ export default function Clientas() {
                 >
                   <div className="flex-1 min-w-0">
                     <p className="font-medium text-gray-800 truncate">{c.nombre}</p>
-                    <p className="text-xs text-gray-400">{c.telefono}</p>
+                    <p className="text-xs text-gray-500">{c.telefono}</p>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="w-16 h-2 bg-gray-100 rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-rosa-dark rounded-full transition-all"
+                        className="h-full bg-rosa-dark rounded-full transition-all motion-reduce:transition-none"
                         style={{ width: `${progreso}%` }}
                       />
                     </div>
-                    <span className="text-xs text-rosa-dark font-semibold whitespace-nowrap">
+                    <span className="text-xs text-rosa-ink font-semibold whitespace-nowrap">
                       {visitas}/10
                     </span>
                   </div>

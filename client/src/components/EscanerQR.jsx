@@ -87,7 +87,7 @@ export default function EscanerQR({ onScan, onError }) {
       {!scanning ? (
         <button
           onClick={startScanning}
-          className="bg-rosa-dark text-white px-6 py-3 rounded-full font-medium hover:bg-rosa-dark/90 transition"
+          className="bg-rosa-ink text-white px-6 py-3 rounded-full font-medium hover:bg-rosa-ink/90 transition"
         >
           📷 Abrir cámara
         </button>
@@ -103,7 +103,7 @@ export default function EscanerQR({ onScan, onError }) {
       {/* Buscar por nombre o teléfono */}
       <button
         onClick={() => setShowBuscar(!showBuscar)}
-        className="text-sm text-rosa-dark underline"
+        className="text-sm text-rosa-ink underline"
       >
         {showBuscar ? 'Ocultar búsqueda' : 'Buscar por nombre o teléfono'}
       </button>
@@ -116,12 +116,13 @@ export default function EscanerQR({ onScan, onError }) {
               value={busqueda}
               onChange={(e) => setBusqueda(e.target.value)}
               placeholder="Nombre o teléfono..."
+              aria-label="Buscar clienta por nombre o teléfono"
               className="flex-1 px-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-rosa-dark/50"
             />
             <button
               type="submit"
               disabled={buscando || busqueda.trim().length < 2}
-              className="bg-rosa-dark text-white px-4 py-2 rounded-lg text-sm disabled:opacity-50"
+              className="bg-rosa-ink text-white px-4 py-2 rounded-lg text-sm disabled:opacity-50"
             >
               {buscando ? '...' : 'Buscar'}
             </button>
@@ -136,7 +137,7 @@ export default function EscanerQR({ onScan, onError }) {
                     className="w-full text-left px-4 py-3 hover:bg-rosa/20 transition"
                   >
                     <p className="font-medium text-gray-800">{c.nombre}</p>
-                    <p className="text-xs text-gray-400">{c.telefono} · {c.tarjetas?.[0]?.visitas_completadas || 0}/10 visitas</p>
+                    <p className="text-xs text-gray-500">{c.telefono} · {c.tarjetas?.[0]?.visitas_completadas || 0}/10 visitas</p>
                   </button>
                 </li>
               ))}

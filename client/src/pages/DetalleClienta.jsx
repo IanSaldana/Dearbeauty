@@ -35,6 +35,18 @@ export default function DetalleClienta() {
       .finally(() => setLoading(false));
   }, [id]);
 
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === 'Escape') {
+        setConfirmDelete(false);
+        setEditando(false);
+        setError('');
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
+
   const handleEdit = async (e) => {
     e.preventDefault();
     setError('');
@@ -82,22 +94,22 @@ export default function DetalleClienta() {
           <div className="text-center">
             <h1 className="text-xl font-bold text-gray-800">{clienta.nombre}</h1>
             <p className="text-sm text-gray-500">{clienta.telefono}</p>
-            {clienta.email && <p className="text-sm text-gray-400">{clienta.email}</p>}
+            {clienta.email && <p className="text-sm text-gray-500">{clienta.email}</p>}
             {clienta.fecha_nacimiento && (
-              <p className="text-sm text-gray-400">
+              <p className="text-sm text-gray-500">
                 🎂 {new Date(clienta.fecha_nacimiento).toLocaleDateString('es-CL', { timeZone: 'UTC' })}
               </p>
             )}
             <div className="flex justify-center gap-2 mt-3">
               <button
                 onClick={() => setEditando(true)}
-                className="px-4 py-1.5 text-sm bg-rosa/50 text-rosa-dark rounded-lg hover:bg-rosa transition"
+                className="px-4 py-2.5 text-sm bg-rosa/50 text-rosa-ink rounded-lg hover:bg-rosa transition"
               >
                 ✏️ Editar
               </button>
               <button
                 onClick={() => setConfirmDelete(true)}
-                className="px-4 py-1.5 text-sm bg-red-50 text-red-500 rounded-lg hover:bg-red-100 transition"
+                className="px-4 py-2.5 text-sm bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition"
               >
                 🗑️ Eliminar
               </button>
@@ -107,13 +119,14 @@ export default function DetalleClienta() {
           <form onSubmit={handleEdit} className="space-y-3">
             <h2 className="font-semibold text-gray-800 text-center mb-2">Editar datos</h2>
             {error && (
-              <div className="bg-red-50 text-red-600 text-xs p-2 rounded-lg">{error}</div>
+              <div className="bg-red-50 text-red-700 text-xs p-2 rounded-lg">{error}</div>
             )}
             <input
               type="text"
               value={form.nombre}
               onChange={(e) => setForm({ ...form, nombre: e.target.value })}
               placeholder="Nombre"
+              aria-label="Nombre"
               className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-rosa-dark/50"
               required
             />
@@ -122,6 +135,7 @@ export default function DetalleClienta() {
               value={form.telefono}
               onChange={(e) => setForm({ ...form, telefono: e.target.value })}
               placeholder="Teléfono"
+              aria-label="Teléfono"
               className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-rosa-dark/50"
               required
             />
@@ -130,19 +144,21 @@ export default function DetalleClienta() {
               value={form.email}
               onChange={(e) => setForm({ ...form, email: e.target.value })}
               placeholder="Email (opcional)"
+              aria-label="Email"
               className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-rosa-dark/50"
             />
             <input
               type="date"
               value={form.fecha_nacimiento}
               onChange={(e) => setForm({ ...form, fecha_nacimiento: e.target.value })}
+              aria-label="Fecha de nacimiento"
               className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-rosa-dark/50"
             />
             <div className="flex gap-2">
               <button
                 type="submit"
                 disabled={saving}
-                className="flex-1 bg-rosa-dark text-white py-2 rounded-lg text-sm font-medium hover:bg-rosa-dark/90 transition disabled:opacity-50"
+                className="flex-1 bg-rosa-ink text-white py-2 rounded-lg text-sm font-medium hover:bg-rosa-ink/90 transition disabled:opacity-50"
               >
                 {saving ? 'Guardando...' : 'Guardar'}
               </button>
@@ -160,20 +176,25 @@ export default function DetalleClienta() {
 
       {/* Modal confirmación eliminar */}
       {confirmDelete && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
+        <div
+          className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Confirmar eliminación"
+        >
           <div className="bg-white rounded-2xl p-6 max-w-sm w-full space-y-4">
             <h3 className="font-bold text-gray-800 text-center">¿Estás segura?</h3>
             <p className="text-sm text-gray-500 text-center">
               Se borrarán todos los datos de <strong>{clienta.nombre}</strong>: tarjetas, visitas y toda su información.
             </p>
             {error && (
-              <div className="bg-red-50 text-red-600 text-xs p-2 rounded-lg">{error}</div>
+              <div className="bg-red-50 text-red-700 text-xs p-2 rounded-lg">{error}</div>
             )}
             <div className="flex gap-2">
               <button
                 onClick={handleDelete}
                 disabled={saving}
-                className="flex-1 bg-red-500 text-white py-2 rounded-lg text-sm font-medium hover:bg-red-600 transition disabled:opacity-50"
+                className="flex-1 bg-red-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-red-700 transition disabled:opacity-50"
               >
                 {saving ? 'Eliminando...' : 'Sí, eliminar'}
               </button>
@@ -202,7 +223,7 @@ export default function DetalleClienta() {
         <div className="inline-block p-3 bg-white border rounded-lg">
           <QRCodeSVG value={clienta.qr_code} size={180} />
         </div>
-        <p className="text-xs text-gray-400 mt-2">
+        <p className="text-xs text-gray-500 mt-2">
           La clienta puede mostrar este QR desde su celular
         </p>
         <div className="flex items-center justify-center gap-3 mt-3">
@@ -210,7 +231,7 @@ export default function DetalleClienta() {
             href={qrUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm text-rosa-dark underline"
+            className="text-sm text-rosa-ink underline"
           >
             Ver vista de clienta
           </a>
@@ -227,16 +248,16 @@ export default function DetalleClienta() {
               <li key={v.id} className="flex items-center justify-between text-sm border-b border-gray-50 pb-2">
                 <span>Visita {v.numero_visita}</span>
                 <div className="text-right">
-                  <span className="text-gray-400">{new Date(v.fecha).toLocaleDateString()}</span>
+                  <span className="text-gray-500">{new Date(v.fecha).toLocaleDateString()}</span>
                   {v.recompensa && (
-                    <span className="ml-2 text-dorado">🏆</span>
+                    <span className="ml-2 text-dorado" aria-hidden="true">🏆</span>
                   )}
                 </div>
               </li>
             ))}
           </ul>
         ) : (
-          <p className="text-sm text-gray-400">Sin visitas aún</p>
+          <p className="text-sm text-gray-500">Sin visitas aún</p>
         )}
       </div>
     </div>

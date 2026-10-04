@@ -31,7 +31,7 @@ export default function VistaClienta() {
         {/* Header */}
         <div className="text-center">
           <img src="/icon-192.png" alt="Dear Beauty" className="w-16 h-16 mx-auto mb-1" />
-          <h1 className="text-2xl font-bold text-rosa-dark">Dear Beauty</h1>
+          <h1 className="text-2xl font-bold text-rosa-ink">Dear Beauty</h1>
           <p className="text-gray-500 text-sm">Tarjeta de Fidelidad</p>
         </div>
 
@@ -48,7 +48,7 @@ export default function VistaClienta() {
         {/* QR para mostrar a la manicurista */}
         <div className="bg-white rounded-2xl shadow-sm p-6 text-center">
           <h3 className="font-medium text-gray-700 mb-2">Tu código QR</h3>
-          <p className="text-xs text-gray-400 mb-4">Muéstralo a tu manicurista para registrar tu visita</p>
+          <p className="text-xs text-gray-500 mb-4">Muéstralo a tu manicurista para registrar tu visita</p>
           <div className="inline-block p-4 bg-white border-2 border-rosa-dark/20 rounded-xl">
             <QRCodeSVG value={clienta.qr_code} size={200} />
           </div>
@@ -98,7 +98,7 @@ export default function VistaClienta() {
             )}
 
             {/* Vencimiento */}
-            <p className="text-center text-xs text-gray-400">
+            <p className="text-center text-xs text-gray-600">
               Tarjeta válida hasta: {new Date(tarjetaActiva.fecha_vencimiento).toLocaleDateString()}
             </p>
           </>

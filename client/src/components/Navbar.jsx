@@ -13,7 +13,7 @@ export default function Navbar() {
   return (
     <nav className="bg-white shadow-sm border-b border-rosa-dark/20 sticky top-0 z-50">
       <div className="max-w-lg mx-auto px-4 py-3 flex items-center justify-between">
-        <Link to="/" className="text-lg font-semibold text-rosa-dark">
+        <Link to="/" className="text-lg font-semibold text-rosa-ink">
           💅 Dear Beauty
         </Link>
         <div className="flex items-center gap-3">
@@ -22,7 +22,7 @@ export default function Navbar() {
           </span>
           <button
             onClick={handleLogout}
-            className="text-sm text-gray-500 hover:text-rosa-dark"
+            className="text-sm text-gray-500 hover:text-rosa-ink"
           >
             Salir
           </button>

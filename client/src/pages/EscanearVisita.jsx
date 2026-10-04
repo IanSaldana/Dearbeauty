@@ -45,9 +45,9 @@ export default function EscanearVisita() {
       <h1 className="text-xl font-bold text-gray-800 text-center">Escanear Visita</h1>
 
       {error && (
-        <div className="bg-red-50 text-red-600 text-sm p-3 rounded-lg text-center">
+        <div className="bg-red-50 text-red-700 text-sm p-3 rounded-lg text-center">
           {error}
-          <button onClick={resetear} className="block mx-auto mt-2 text-rosa-dark underline">
+          <button onClick={resetear} className="block mx-auto mt-2 text-rosa-ink underline">
             Intentar de nuevo
           </button>
         </div>
@@ -58,18 +58,18 @@ export default function EscanearVisita() {
         <div className="bg-green-50 rounded-2xl p-6 text-center space-y-3">
           <p className="text-4xl">🎉</p>
           <p className="font-bold text-green-800">{resultado.mensaje}</p>
-          <p className="text-sm text-green-600">
-            {resultado.clienta.nombre}
-          </p>
-          {resultado.recompensa && (
-            <div className="bg-dorado/20 rounded-lg p-3 mt-3">
-              <p className="text-dorado font-bold">🏆 ¡Recompensa!</p>
+            <p className="text-sm text-green-700">
+              {resultado.clienta.nombre}
+            </p>
+            {resultado.recompensa && (
+              <div className="bg-dorado/20 rounded-lg p-3 mt-3">
+                <p className="text-dorado-ink font-bold">🏆 ¡Recompensa!</p>
               <p className="text-sm">{resultado.recompensa}</p>
             </div>
           )}
           <button
             onClick={resetear}
-            className="mt-4 bg-rosa-dark text-white px-6 py-2 rounded-full"
+            className="mt-4 bg-rosa-ink text-white px-6 py-2 rounded-full"
           >
             Escanear otra
           </button>
@@ -103,7 +103,7 @@ export default function EscanearVisita() {
             <button
               onClick={handleMarcar}
               disabled={loading}
-              className="flex-1 bg-rosa-dark text-white py-3 rounded-lg font-medium hover:bg-rosa-dark/90 transition disabled:opacity-50"
+              className="flex-1 bg-rosa-ink text-white py-3 rounded-lg font-medium hover:bg-rosa-ink/90 transition disabled:opacity-50"
             >
               {loading ? 'Marcando...' : '✓ Marcar Visita'}
             </button>

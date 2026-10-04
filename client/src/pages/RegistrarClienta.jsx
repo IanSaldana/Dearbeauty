@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
+import DatePicker from '../components/DatePicker';
 
 export default function RegistrarClienta() {
   const [nombre, setNombre] = useState('');
@@ -38,7 +39,7 @@ export default function RegistrarClienta() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && (
-            <div className="bg-red-50 text-red-600 text-sm p-3 rounded-lg">
+            <div className="bg-red-50 text-red-700 text-sm p-3 rounded-lg">
               {error}
             </div>
           )}
@@ -85,18 +86,18 @@ export default function RegistrarClienta() {
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Fecha de nacimiento (opcional)
             </label>
-            <input
-              type="date"
+            <DatePicker
               value={fechaNacimiento}
-              onChange={(e) => setFechaNacimiento(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-rosa-dark/50"
+              onChange={setFechaNacimiento}
+              disableFuture
+              ariaLabel="Fecha de nacimiento"
             />
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-rosa-dark text-white py-3 rounded-lg font-medium hover:bg-rosa-dark/90 transition disabled:opacity-50"
+            className="w-full bg-rosa-ink text-white py-3 rounded-lg font-medium hover:bg-rosa-ink/90 transition disabled:opacity-50"
           >
             {loading ? 'Registrando...' : 'Registrar Clienta'}
           </button>

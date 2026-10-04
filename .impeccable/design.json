@@ -1,0 +1,167 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-08T12:36:46-03:00",
+  "title": "Design System: Dear Beauty",
+  "extensions": {
+    "colorMeta": {
+      "rosa-soft": {
+        "role": "neutral",
+        "displayName": "Rosa Soft",
+        "canonical": "#F5E6F0",
+        "tonalRamp": ["#f4dbea", "#f3d3e6", "#f2cbe2", "#f3cade", "#f6cfdf", "#f9d9e4", "#fbe2e8", "#fdeef3"]
+      },
+      "rosa-orchid": {
+        "role": "primary",
+        "displayName": "Rosa Orquídea",
+        "canonical": "#D4A5C7",
+        "tonalRamp": ["#2a1626", "#4d2a44", "#713e63", "#945383", "#ad6b9c", "#c48ab6", "#d6a7ca", "#ecd9e7"]
+      },
+      "dorado-miel": {
+        "role": "secondary",
+        "displayName": "Dorado Miel",
+        "canonical": "#C9A96E",
+        "tonalRamp": ["#1f1a10", "#3a3120", "#564930", "#716030", "#8d783f", "#aa9256", "#c4ab77", "#e8dcc2"]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "#1f2937",
+        "tonalRamp": ["#101419", "#1f2937", "#2e3b4d", "#3f4e63", "#51617a", "#64748b", "#7f8ea4", "#e2e8f0"]
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Faint / Muted",
+        "canonical": "#9ca3af",
+        "tonalRamp": ["#1f2a37", "#374151", "#4b5563", "#6b7280", "#9ca3af", "#b4bac5", "#cdd2da", "#f3f4f6"]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "Surface",
+        "canonical": "#ffffff",
+        "tonalRamp": ["#e5e7eb", "#eceef1", "#f2f4f6", "#f7f8fa", "#fafbfc", "#fdfdfe", "#ffffff", "#ffffff"]
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "Line",
+        "canonical": "#e5e7eb",
+        "tonalRamp": ["#c3c9d1", "#cdd2da", "#d6dbe2", "#e0e3e9", "#e5e7eb", "#eceef2", "#f2f4f7", "#f9fafc"]
+      }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display / Brand", "purpose": "Títulos de pantalla y la marca." },
+      "title": { "displayName": "Title", "purpose": "Encabezados de sección y tarjetas." },
+      "body": { "displayName": "Body", "purpose": "Texto principal e ítems de lista." },
+      "label": { "displayName": "Label", "purpose": "Etiquetas, pestañas y micro-textos." }
+    },
+    "shadows": [
+      { "name": "card", "value": "0 1px 2px 0 rgb(0 0 0 / 0.05)", "purpose": "Separación suave por defecto de las tarjetas sobre el fondo rosa pálido." },
+      { "name": "elevated", "value": "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)", "purpose": "Piezas destacadas: tarjeta de fidelidad, login, paneles de confirmación y modales." }
+    ],
+    "motion": [
+      { "name": "state-transition", "value": "transition: color 0.15s, background 0.15s, border 0.15s, box-shadow 0.15s", "purpose": "Transiciones rápidas y discretas de estado en botones, filas y navegación." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" },
+      { "name": "xl", "value": "1280px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Acción decisiva: iniciar sesión, registrar, marcar visita, guardar.",
+      "html": "<button class=\"ds-btn-primary\">Marcar Visita</button>",
+      "css": ".ds-btn-primary { background: #D4A5C7; color: #ffffff; padding: 12px 16px; border: none; border-radius: 12px; font-family: ui-sans-serif, system-ui, sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; transition: background 0.15s, opacity 0.15s; } .ds-btn-primary:hover { background: rgba(212, 165, 199, 0.9); } .ds-btn-primary:focus-visible { outline: 2px solid rgba(212, 165, 199, 0.5); outline-offset: 2px; } .ds-btn-primary:active { background: #c391b4; } .ds-btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }"
+    },
+    {
+      "name": "Secondary / Reward Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Acción de premio o hito: Nueva Clienta.",
+      "html": "<button class=\"ds-btn-secondary\">+ Nueva Clienta</button>",
+      "css": ".ds-btn-secondary { background: #C9A96E; color: #ffffff; padding: 12px 16px; border: none; border-radius: 12px; font-family: ui-sans-serif, system-ui, sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; transition: background 0.15s; } .ds-btn-secondary:hover { background: rgba(201, 169, 110, 0.9); } .ds-btn-secondary:focus-visible { outline: 2px solid rgba(201, 169, 110, 0.5); outline-offset: 2px; }"
+    },
+    {
+      "name": "Soft / Edit Button",
+      "kind": "button",
+      "refersTo": "button-soft",
+      "description": "Acción terciaria y de edición, lavada en rosa suave.",
+      "html": "<button class=\"ds-btn-soft\">✏️ Editar</button>",
+      "css": ".ds-btn-soft { background: #F5E6F0; color: #D4A5C7; padding: 6px 16px; border: none; border-radius: 12px; font-family: ui-sans-serif, system-ui, sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; transition: background 0.15s; } .ds-btn-soft:hover { background: #f3dbea; } .ds-btn-soft:focus-visible { outline: 2px solid rgba(212, 165, 199, 0.5); outline-offset: 2px; }"
+    },
+    {
+      "name": "Input Field",
+      "kind": "input",
+      "refersTo": "input-field",
+      "description": "Campo de texto: nombre, teléfono, fecha, email, contraseña.",
+      "html": "<input class=\"ds-input\" type=\"text\" placeholder=\"Nombre o teléfono...\" />",
+      "css": ".ds-input { width: 100%; background: #ffffff; color: #1f2937; padding: 8px 16px; border: 1px solid #e5e7eb; border-radius: 8px; font-family: ui-sans-serif, system-ui, sans-serif; font-size: 14px; line-height: 1.5; transition: box-shadow 0.15s, border-color 0.15s; } .ds-input::placeholder { color: #9ca3af; } .ds-input:focus { outline: none; border-color: rgba(212, 165, 199, 0.5); box-shadow: 0 0 0 2px rgba(212, 165, 199, 0.5); } .ds-input:disabled { opacity: 0.5; }"
+    },
+    {
+      "name": "Filter Chip",
+      "kind": "chip",
+      "refersTo": "filter-chip-selected",
+      "description": "Píldora de filtro (Visitas): activa rosa orquídea, inactiva blanca con borde.",
+      "html": "<div class=\"ds-chips\"><button class=\"ds-chip ds-chip-active\">Hoy</button><button class=\"ds-chip\">Esta semana</button></div>",
+      "css": ".ds-chip { background: #ffffff; color: #6b7280; padding: 6px 12px; border: 1px solid #e5e7eb; border-radius: 9999px; font-family: ui-sans-serif, system-ui, sans-serif; font-size: 12px; font-weight: 500; white-space: nowrap; cursor: pointer; transition: background 0.15s, border-color 0.15s, color 0.15s; margin-right: 8px; } .ds-chip:hover { border-color: rgba(212, 165, 199, 0.5); } .ds-chip-active { background: #D4A5C7; color: #ffffff; border-color: #D4A5C7; } .ds-chip:focus-visible { outline: 2px solid rgba(212, 165, 199, 0.5); outline-offset: 2px; }"
+    },
+    {
+      "name": "Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Contenedor blanco estándar para listas, secciones y paneles.",
+      "html": "<div class=\"ds-card\"><p class=\"ds-card-title\">Visitas recientes</p><p class=\"ds-card-body\">No hay visitas aún</p></div>",
+      "css": ".ds-card { background: #ffffff; border-radius: 12px; box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05); padding: 16px; border: none; } .ds-card-title { font-family: ui-sans-serif, system-ui, sans-serif; font-size: 18px; font-weight: 600; line-height: 1.25; color: #1f2937; margin: 0 0 12px; } .ds-card-body { font-family: ui-sans-serif, system-ui, sans-serif; font-size: 14px; line-height: 1.5; color: #9ca3af; margin: 0; }"
+    },
+    {
+      "name": "Reward Badge",
+      "kind": "chip",
+      "refersTo": "reward-badge",
+      "description": "Insignia píldora del premio dorado (🎁 recompensa, 🏆 trofeo).",
+      "html": "<span class=\"ds-badge\">🎁 REGALO</span>",
+      "css": ".ds-badge { display: inline-flex; align-items: center; background: rgba(201, 169, 110, 0.2); color: #C9A96E; padding: 2px 8px; border-radius: 9999px; font-family: ui-sans-serif, system-ui, sans-serif; font-size: 10px; font-weight: 500; line-height: 1.25; }"
+    },
+    {
+      "name": "Loyalty Card",
+      "kind": "custom",
+      "refersTo": "loyalty-card",
+      "description": "La tarjeta de fidelidad: sello brand sobre rosa suave con 10 círculos de progreso.",
+      "html": "<div class=\"ds-loyalty\"><p class=\"ds-loyalty-title\">Tarjeta de Fidelidad</p><div class=\"ds-loyalty-dots\"><span class=\"ds-dot ds-dot-done\">✓</span><span class=\"ds-dot ds-dot-done\">✓</span><span class=\"ds-dot\"></span><span class=\"ds-dot\"></span><span class=\"ds-dot ds-dot-reward\">15% OFF</span><span class=\"ds-dot\"></span><span class=\"ds-dot\"></span><span class=\"ds-dot\"></span><span class=\"ds-dot\"></span><span class=\"ds-dot ds-dot-reward\">gratis</span></div></div>",
+      "css": ".ds-loyalty { background: rgba(245, 230, 240, 0.6); border: 1px solid rgba(212, 165, 199, 0.1); border-radius: 16px; box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1); padding: 20px; } .ds-loyalty-title { font-family: ui-sans-serif, system-ui, sans-serif; font-size: 24px; font-weight: 900; letter-spacing: 0.05em; text-transform: uppercase; text-align: center; color: rgba(212, 165, 199, 0.3); margin: 0 0 16px; } .ds-loyalty-dots { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; } .ds-dot { width: 48px; height: 48px; border-radius: 50%; border: 2px solid rgba(31, 41, 55, 0.7); background: #ffffff; color: #374151; display: flex; align-items: center; justify-content: center; font-family: ui-sans-serif, system-ui, sans-serif; font-size: 16px; margin: 0 auto; } .ds-dot-done { background: #D4A5C7; border-color: #D4A5C7; color: #ffffff; } .ds-dot-reward { font-size: 9px; font-weight: 700; font-style: italic; text-align: center; line-height: 1.1; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "El Salón de Rosas",
+    "overview": "Dear Beauty es un sistema mobile-first que lleva la calidez y el mimo de un salón de uñas al bolsillo de la manicurista y de su clienta. La paleta pastel de rosas sobre fondos blancos y rosados muy suaves crea una atmósfera delicada, limpia y acogedora — el tono de una sala de manicura donde todo invita a quedarse. Este es un sistema para operar antes que para impresionar: la manicurista escanea un QR, confirma una visita y entrega una recompensa en segundos, entre servicio y servicio, sin fricción. El carácter es delicate & premium: los componentes son refinados y comedidos — tarjetas blancas de esquinas suaves, tipografía de sistema clara, y un único acento rosa orquídea que marca las acciones. El dorado miel aparece como una capa de premio: se reserva para las recompensas, los trofeos y las acciones aspiracionales, de modo que el dorado se sienta como un privilegio que se gana, no como ruido decorativo. Menos es más: la rosa suave cubre el fondo, la rosa orquídea conduce, y el dorado premia. La profundidad se logra por capas tonales sobre un fondo pastel, no por sombras pesadas: las tarjetas blancas flotan suavemente (sombras mínimas) y las superficies rosa pálido actúan como relleno tonal entre ellas. El resultado es un sistema aireado, de bajo contraste, que se siente ligero y femenino, a la vez que mantiene la escaneabilidad que la manicurista necesita para moverse rápido.",
+    "keyCharacteristics": [
+      "Mobile-first: una sola columna centrada (max-w-lg) emulando una app móvil.",
+      "Pastel y aireado: superficies blancas flotando sobre un fondo rosa muy pálido (bg-rosa/30).",
+      "Delicado y premium: refinado, no ruidoso; el dorado es un premio escaso.",
+      "Operación silenciosa: la interfaz de la manicurista es sobria y escaneable; el encanto vive en la tarjeta de fidelidad y los momentos de recompensa."
+    ],
+    "rules": [
+      { "name": "The Dorado Premio Rule", "body": "El dorado miel se usa solo para recompensas, trofeos y acciones de premio. Nunca como acento de interfaz genérico — su rareza es lo que lo hace deseable.", "section": "colors" },
+      { "name": "The Operate-Silence Rule", "body": "Las superficies de operación (dashboard, listas, calendario) son sobrias: blanco, gris, rosa orquídea para acciones puntuales. El encanto y la emoción se reservan para la tarjeta de fidelidad y los momentos de recompensa.", "section": "colors" },
+      { "name": "The Snappy-Line Rule", "body": "Las líneas de contenido en listas móviles se truncan en vez de desbordar; los números de visita van en línea al final de la fila para escaneo rápida.", "section": "typography" },
+      { "name": "The Flat-at-Rest Rule", "body": "Las superficies están planas en reposo; la sombra shadow-sm es el estándar y shadow-lg aparece solo en piezas importantes o superpuestas. Los hover de fila usan lavados rosados en lugar de levantar la tarjeta.", "section": "elevation" },
+      { "name": "The Gentle-Corner Rule", "body": "Toda superficie recibe un radio; nunca hay esquinas de 0px. El sistema se siente suave y acogedor. Los bordes son finos con tinta gris clara o rosa al 10-30%.", "section": "shapes" }
+    ],
+    "dos": [
+      "Do reservar el rosa orquídea (#D4A5C7) para acciones primarias, navegación activa y progreso — es el timón visual del sistema.",
+      "Do guardar el dorado miel (#C9A96E) solo para recompensas y momentos de premio (The Dorado Premio Rule).",
+      "Do mantener el fondo de página en rosa pálido (bg-rosa/30) y las tarjetas blancas flotando con shadow-sm (The Flat-at-Rest Rule).",
+      "Do usar rounded-lg (12px) como radio de tarjeta estándar y rounded-full para píldoras y círculos.",
+      "Do dar a todo input un anillo de foco rosa orquídea (focus:ring-2 focus:ring-rosa-dark/50) — es el único acento de campo.",
+      "Do mantener la tipografía en el sistema nativo; la personalidad proviene del color, no de fuentes adicionales."
+    ],
+    "donts": [
+      "Don't usar el dorado miel como acento de interfaz genérico o en exceso; perdería su valor de premio.",
+      "Don't aplicar sombras pesadas a las tarjetas — shadow-sm es la norma, shadow-lg solo para piezas destacadas o superpuestas.",
+      "Don't añadir esquinas de 0px; el sistema es suave por diseño (The Gentle-Corner Rule).",
+      "Don't convertir la interfaz de operación (listas, calendario, dashboard) en algo decorativo; el encanto vive en la tarjeta de fidelidad y los momentos de recompensa (The Operate-Silence Rule)."
+    ]
+  }
+}

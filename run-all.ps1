@@ -19,6 +19,27 @@ try {
     exit 1
 }
 
+# Verificar que PostgreSQL está corriendo (servicio local)
+Write-Host ""
+$pgService = Get-Service -Name "postgresql*" -ErrorAction SilentlyContinue | Where-Object { $_.Status -eq "Running" }
+if ($pgService) {
+    Write-Host "[OK] PostgreSQL corriendo ($($pgService.Name))" -ForegroundColor Green
+} else {
+    Write-Host "[ERROR] PostgreSQL no está corriendo. Inícialo (Start-Service postgresql-x64-16)." -ForegroundColor Red
+    exit 1
+}
+
+# Aplicar migraciones pendientes
+Write-Host ">> Aplicando migraciones de Prisma..." -ForegroundColor Cyan
+Push-Location "$PSScriptRoot\server"
+npx prisma migrate deploy
+if ($LASTEXITCODE -ne 0) {
+    Pop-Location
+    Write-Host "[ERROR] Falló la aplicación de migraciones." -ForegroundColor Red
+    exit 1
+}
+Pop-Location
+
 # Iniciar Backend (Express + Prisma + PostgreSQL)
 Write-Host ""
 Write-Host ">> Iniciando Backend (puerto 3001)..." -ForegroundColor Cyan

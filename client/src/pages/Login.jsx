@@ -30,13 +30,13 @@ export default function Login() {
       <div className="bg-white rounded-2xl shadow-lg p-8 w-full max-w-sm">
         <div className="text-center mb-6">
           <img src="/icon-192.png" alt="Dear Beauty" className="w-20 h-20 mx-auto mb-2" />
-          <h1 className="text-2xl font-bold text-rosa-dark">Dear Beauty</h1>
+          <h1 className="text-2xl font-bold text-rosa-ink">Dear Beauty</h1>
           <p className="text-gray-500 text-sm mt-1">Panel de Manicurista</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && (
-            <div className="bg-red-50 text-red-600 text-sm p-3 rounded-lg">
+            <div className="bg-red-50 text-red-700 text-sm p-3 rounded-lg">
               {error}
             </div>
           )}
@@ -70,7 +70,7 @@ export default function Login() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-rosa-dark text-white py-3 rounded-lg font-medium hover:bg-rosa-dark/90 transition disabled:opacity-50"
+            className="w-full bg-rosa-ink text-white py-3 rounded-lg font-medium hover:bg-rosa-ink/90 transition disabled:opacity-50"
           >
             {loading ? 'Ingresando...' : 'Iniciar sesión'}
           </button>

@@ -15,7 +15,6 @@ export default function Visitas() {
   const [periodo, setPeriodo] = useState('');
 
   useEffect(() => {
-    setLoading(true);
     const params = new URLSearchParams({ limite: '50' });
     if (periodo) params.set('periodo', periodo);
 
@@ -33,11 +32,11 @@ export default function Visitas() {
         {FILTROS.map((f) => (
           <button
             key={f.key}
-            onClick={() => setPeriodo(f.key)}
+            onClick={() => { setLoading(true); setPeriodo(f.key); }}
             className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition ${
               periodo === f.key
-                ? 'bg-rosa-dark text-white'
-                : 'bg-white text-gray-500 border border-gray-200 hover:border-rosa-dark/50'
+                ? 'bg-rosa-ink text-white'
+                : 'bg-white text-gray-500 border border-gray-200 hover:border-rosa-ink/50'
             }`}
           >
             {f.label}
@@ -49,7 +48,7 @@ export default function Visitas() {
       {loading ? (
         <div className="flex items-center justify-center h-32">Cargando...</div>
       ) : visitas.length === 0 ? (
-        <p className="text-sm text-gray-400 text-center py-8">
+        <p className="text-sm text-gray-500 text-center py-8">
           No hay visitas {periodo ? 'en este periodo' : 'registradas'}
         </p>
       ) : (
@@ -64,7 +63,7 @@ export default function Visitas() {
                   <p className="font-medium text-gray-800">
                     {v.tarjeta?.clienta?.nombre || 'Clienta'}
                   </p>
-                  <span className="text-[10px] text-gray-400">
+                  <span className="text-[10px] text-gray-500">
                     {new Date(v.fecha).toLocaleDateString()} · {new Date(v.fecha).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </span>
                 </div>
@@ -73,7 +72,7 @@ export default function Visitas() {
                     Visita {v.numero_visita} de 10
                   </span>
                   {v.recompensa && (
-                    <span className="text-[10px] bg-dorado/20 text-dorado px-2 py-0.5 rounded-full font-medium">
+                    <span className="text-[10px] bg-dorado/20 text-dorado-ink px-2 py-0.5 rounded-full font-medium">
                       🎁 {v.recompensa.split(' - ')[0]}
                     </span>
                   )}

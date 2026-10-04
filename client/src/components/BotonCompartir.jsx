@@ -43,7 +43,7 @@ export default function BotonCompartir({ url }) {
   return (
     <button
       onClick={handleShare}
-      className="inline-flex items-center gap-1.5 px-4 py-2 bg-rosa-dark/10 text-rosa-dark rounded-lg text-sm font-medium hover:bg-rosa-dark/20 transition"
+      className="inline-flex items-center gap-1.5 px-4 py-2 bg-rosa-dark/10 text-rosa-ink rounded-lg text-sm font-medium hover:bg-rosa-dark/20 transition"
     >
       {copiado ? '✅ ¡Link copiado!' : '🔗 Compartir'}
     </button>

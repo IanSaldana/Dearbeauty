@@ -57,9 +57,10 @@ o `app.get('*')` si el server sirve el `dist/`). Es lo primero que hay que resol
 ## Sistema de diseño
 
 - Lee `DESIGN.md` (y `.impeccable/design.json`) antes de tocar UI. Ambos están **gitignorados** — son locales, no asumas que un clon los tenga.
-- Los tokens de marca están definidos en `client/src/index.css` vía `@theme` de Tailwind 4: `rosa`, `rosa-dark`, `rosa-ink`, `dorado`, `dorado-ink`, `dorado-light`. `DESIGN.md` es anterior a `rosa-ink`; **las pantallas nuevas usan `rosa-ink`**, prefiere ese.
-- Reglas duras del design system: el dorado (`dorado`) está reservado para recompensas/prize only; las superficies se mantienen planas en reposo con `shadow-sm` (`shadow-lg` solo para la tarjeta de fidelidad, el login y modales); toda superficie lleva radio; la página es una única columna `max-w-lg` sobre `bg-rosa/30` con `BottomNav` fijo (`pb-24` lo despeja).
-- Sin web fonts — solo el stack del sistema. El skill `impeccable` (`.opencode/skills/`) es la vía prevista para trabajo de diseño.
+- Los tokens de marca están definidos en `client/src/index.css` vía `@theme` de Tailwind 4 (paleta extraída del logo: `orquidea`, `lavanda`, `durazno`, `tinta`) más los roles semánticos `canvas`, `surface`, `line`, `primary`, `primary-soft`, `secondary`, `danger`. Usa siempre los roles semánticos, nunca hex sueltos. La paleta antigua `rosa/dorado` se eliminó (Fase 1: rediseño del Inicio).
+- Reglas duras del design system: las recompensas se distinguen con `durazno` + icono lucide (ya no hay dorado); las superficies se mantienen planas en reposo con `shadow-sm` (`shadow-lg` solo para la tarjeta de fidelidad, el login y modales); toda superficie lleva radio; la página es una única columna `max-w-lg` sobre `bg-canvas` con `BottomNav` fijo (`pb-24` lo despeja, el Inicio usa `pb-28`).
+- Fuentes web aprobadas: `Plus Jakarta Sans Variable` (texto) y `Yellowtail` (clase `font-script`, solo saludo de cabecera). El skill `impeccable` (`.opencode/skills/`) es la vía prevista para trabajo de diseño.
+- Sin emojis en la UI: usa `lucide-react` con `aria-hidden="true"`.
 
 ## Convenciones
 

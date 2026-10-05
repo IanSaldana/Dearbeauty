@@ -1,21 +1,21 @@
 const bgColors = {
-  cumpleanos: 'bg-amber-50 border-amber-200',
-  recompensa: 'bg-pink-50 border-pink-200',
-  vencimiento: 'bg-orange-50 border-orange-200',
+  cumpleanos: 'bg-durazno-50 border-durazno-100',
+  recompensa: 'bg-primary-soft border-primary-soft',
+  vencimiento: 'bg-danger/10 border-danger/20',
 };
 
 const textColors = {
-  cumpleanos: 'text-amber-800',
-  recompensa: 'text-pink-800',
-  vencimiento: 'text-orange-800',
+  cumpleanos: 'text-primary',
+  recompensa: 'text-primary',
+  vencimiento: 'text-danger',
 };
 
 export default function BannerEvento({ evento }) {
   if (!evento) return null;
 
   return (
-    <div className={`rounded-xl border p-4 text-center ${bgColors[evento.tipo] || 'bg-gray-50 border-gray-200'}`}>
-      <p className={`text-sm font-semibold ${textColors[evento.tipo] || 'text-gray-700'}`}>
+    <div className={`rounded-xl border p-4 text-center ${bgColors[evento.tipo] || 'bg-line border-line'}`}>
+      <p className={`text-sm font-semibold ${textColors[evento.tipo] || 'text-tinta'}`}>
         {evento.mensaje}
       </p>
     </div>

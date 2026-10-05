@@ -31,8 +31,10 @@ es Express + Prisma 7 + Postgres. Detalles de comandos y arquitectura en `AGENTS
 
 ## Design system
 
-- Texto de marca: `rosa-ink` (6.4:1), **nunca** `rosa-dark` sobre blanco (2.1:1, falla AA).
-- `dorado` es solo premio (visitas 5/7/10). Su escasez es lo que lo hace deseable.
+- Texto de marca: `primary` (`orquidea-700`) sobre superficies claras. Contraste AA verificado en los tonos 600-900.
+- Recompensas (visitas 5/7/10): superficies `durazno` + icono lucide. Ya no hay dorado (paleta `rosa/dorado` eliminada).
+- Iconos: `lucide-react` con `aria-hidden="true"`. Sin emojis en la UI.
+- Fuentes: `Plus Jakarta Sans Variable` + `Yellowtail` (`font-script`, solo saludo de cabecera).
 - Superficies planas en reposo (`shadow-sm`); `shadow-lg` solo para la tarjeta de fidelidad, login y modales.
 - Toda superficie lleva radio. Superficies de operación sobrias: el encanto vive en la tarjeta y la recompensa.
 - Iconos y textos de cara al usuario en español (es-CL). Los comentarios del código también.

@@ -34,22 +34,22 @@ export default function RegistrarClienta() {
     }
   };
 
-  const campo = 'w-full min-h-11 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rosa-ink/50';
+  const campo = 'w-full min-h-11 px-4 py-2 border border-line rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50';
 
   return (
     <div className="max-w-lg mx-auto px-4 py-6 pb-24 safe-top safe-bottom">
-      <div className="bg-white rounded-2xl shadow-lg p-6">
-        <h1 className="text-xl font-bold text-gray-800 mb-4">Nueva Clienta</h1>
+      <div className="bg-surface rounded-2xl shadow-lg p-6">
+        <h1 className="text-xl font-bold text-tinta mb-4">Nueva Clienta</h1>
 
         <form onSubmit={handleSubmit} className="space-y-4" noValidate>
           {error && (
-            <div role="alert" className="bg-red-50 text-red-800 text-sm p-3 rounded-lg">
+            <div role="alert" className="bg-danger/10 text-danger text-sm p-3 rounded-lg">
               {error}
             </div>
           )}
 
           <div>
-            <label htmlFor="clienta-nombre" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="clienta-nombre" className="block text-sm font-medium text-tinta mb-1">
               Nombre *
             </label>
             <input
@@ -68,7 +68,7 @@ export default function RegistrarClienta() {
           </div>
 
           <div>
-            <label htmlFor="clienta-telefono" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="clienta-telefono" className="block text-sm font-medium text-tinta mb-1">
               Teléfono *
             </label>
             <input
@@ -87,7 +87,7 @@ export default function RegistrarClienta() {
           </div>
 
           <div>
-            <label htmlFor="clienta-email" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="clienta-email" className="block text-sm font-medium text-tinta mb-1">
               Email (opcional)
             </label>
             <input
@@ -106,7 +106,7 @@ export default function RegistrarClienta() {
           </div>
 
           <div>
-            <span className="block text-sm font-medium text-gray-700 mb-1" id="clienta-nacimiento-label">
+            <span className="block text-sm font-medium text-tinta mb-1" id="clienta-nacimiento-label">
               Fecha de nacimiento (opcional)
             </span>
             <DatePicker
@@ -120,7 +120,7 @@ export default function RegistrarClienta() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full min-h-11 bg-rosa-ink text-white py-3 rounded-lg font-medium transition-colors hover:bg-rosa-ink/90 active:bg-rosa-ink/95 disabled:opacity-50"
+            className="w-full min-h-11 bg-primary text-white py-3 rounded-lg font-medium transition-colors hover:bg-primary/90 active:bg-primary/95 disabled:opacity-50"
           >
             {loading ? 'Registrando...' : 'Registrar Clienta'}
           </button>

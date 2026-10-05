@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { Share2, Check } from 'lucide-react';
 
 export default function BotonCompartir({ url }) {
   const [copiado, setCopiado] = useState(false);
@@ -17,7 +18,6 @@ export default function BotonCompartir({ url }) {
       await navigator.clipboard.writeText(url);
       marcarCopiado();
     } catch {
-      // Fallback para navegadores antiguos sin clipboard API
       const input = document.createElement('input');
       input.value = url;
       document.body.appendChild(input);
@@ -37,7 +37,6 @@ export default function BotonCompartir({ url }) {
           url,
         });
       } catch (err) {
-        // El usuario canceló o falló: solo caemos al portapapeles si no fue cancel
         if (err.name !== 'AbortError') {
           copiarLink();
         }
@@ -52,9 +51,19 @@ export default function BotonCompartir({ url }) {
       type="button"
       onClick={handleShare}
       aria-live="polite"
-      className="inline-flex items-center justify-center gap-1.5 min-h-11 px-4 py-2 bg-rosa/50 text-rosa-ink rounded-lg text-sm font-medium transition-colors hover:bg-rosa active:bg-rosa/70"
+      className="inline-flex items-center justify-center gap-1.5 min-h-11 px-4 py-2 bg-primary-soft text-primary rounded-lg text-sm font-medium transition-colors hover:bg-primary-soft active:bg-primary-soft"
     >
-      {copiado ? '✅ ¡Link copiado!' : '🔗 Compartir'}
+      {copiado ? (
+        <>
+          <Check aria-hidden="true" className="size-4" />
+          ¡Link copiado!
+        </>
+      ) : (
+        <>
+          <Share2 aria-hidden="true" className="size-4" />
+          Compartir
+        </>
+      )}
     </button>
   );
 }

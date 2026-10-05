@@ -65,104 +65,16 @@
     color: var(--color-tinta);
     font-family: var(--font-sans);
     -webkit-tap-highlight-color: transparent;
-    -webkit-text-size-adjust: 100%;
-    text-size-adjust: 100%;
-  }
-  body {
-    /* Sin overscroll global: el rebote de Safari rompe la sensación de app nativa */
-    overscroll-behavior-y: none;
-    /* Evita el zoom por doble toque, que compite con el toque de los sellos */
-    touch-action: manipulation;
-    -webkit-tap-highlight-color: transparent;
-  }
-  button,
-  a,
-  [role='button'],
-  label,
-  summary {
-    touch-action: manipulation;
-    -webkit-tap-highlight-color: transparent;
   }
   :focus-visible {
     outline: 3px solid var(--color-lavanda-600);
     outline-offset: 2px;
   }
-  ::selection {
-    background-color: var(--color-primary-soft);
-    color: var(--color-primary);
-  }
   @media (prefers-reduced-motion: reduce) {
     *, ::before, ::after {
       animation-duration: 0.01ms !important;
-      animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
       scroll-behavior: auto !important;
     }
   }
-}
-
-/* En táctil el hover no existe: la fila se pinta al presionar */
-@media (hover: hover) {
-  .toque-activo:hover {
-    background-color: var(--color-primary-soft);
-  }
-}
-
-@media (hover: none) {
-  .toque-activo:hover {
-    background-color: inherit;
-  }
-
-  .toque-activo:active {
-    background-color: color-mix(in oklab, var(--color-primary-soft) 55%, transparent);
-  }
-}
-
-.safe-top {
-  padding-top: env(safe-area-inset-top, 0px);
-}
-
-.safe-bottom {
-  padding-bottom: env(safe-area-inset-bottom, 0px);
-}
-
-.scroll-snap-x-mandatory {
-  scroll-snap-type: x mandatory;
-}
-
-.scroll-snap-inicio {
-  scroll-snap-align: start;
-}
-
-@keyframes celebracion {
-  0% {
-    transform: scale(0.72) translateY(8px);
-    opacity: 0;
-  }
-  55% {
-    transform: scale(1.04) translateY(0);
-    opacity: 1;
-  }
-  100% {
-    transform: scale(1) translateY(0);
-    opacity: 1;
-  }
-}
-
-@keyframes sello-pendiente {
-  0%,
-  100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.08);
-  }
-}
-
-.animar-celebracion {
-  animation: celebracion 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-
-.animar-sello {
-  animation: sello-pendiente 220ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }

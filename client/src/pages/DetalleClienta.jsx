@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { QRCodeSVG } from 'qrcode.react';
+import { Cake, Pencil, Trash2, Trophy } from 'lucide-react';
 import TarjetaFidelidad from '../components/TarjetaFidelidad';
 import BannerEvento from '../components/BannerEvento';
 import BotonCompartir from '../components/BotonCompartir';
@@ -10,7 +11,6 @@ import { EsqueletoTarjeta, Vacio, ErrorConReintento } from '../components/Estado
 import api, { mensajeDeError, esNoEncontrado } from '../services/api';
 import useTecladoVirtual from '../hooks/useTecladoVirtual';
 
-/* Fecha de solo fecha anclada a UTC: formatear en hora local la corre un día */
 const fmtFecha = (iso) => new Date(iso).toLocaleDateString('es-CL', { timeZone: 'UTC' });
 
 export default function DetalleClienta() {
@@ -43,7 +43,6 @@ export default function DetalleClienta() {
             : '',
         });
       })
-      /* Antes un fallo de red terminaba mostrando "Clienta no encontrada" */
       .catch((err) => {
         if (esNoEncontrado(err)) setNoEncontrada(true);
         else setFalloCarga(mensajeDeError(err, 'No pudimos cargar esta clienta.'));
@@ -112,7 +111,7 @@ export default function DetalleClienta() {
             <button
               type="button"
               onClick={() => navigate('/clientas')}
-              className="mt-2 min-h-11 px-5 rounded-lg bg-rosa-ink text-white font-medium transition-colors active:bg-rosa-ink/95"
+              className="mt-2 min-h-11 px-5 rounded-lg bg-primary text-white font-medium transition-colors active:bg-primary/95"
             >
               Ver clientas
             </button>
@@ -135,44 +134,46 @@ export default function DetalleClienta() {
 
   const tarjetaActiva = clienta.tarjetas?.find((t) => t.activa);
   const qrUrl = `${window.location.origin}/clienta/${clienta.qr_code}`;
-  const campo = 'w-full min-h-11 px-3 py-2 border border-gray-300 rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-rosa-ink/50';
+  const campo = 'w-full min-h-11 px-3 py-2 border border-line rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-primary/50';
 
   return (
     <div className="max-w-lg mx-auto px-4 py-6 pb-24 space-y-6 safe-top safe-bottom">
-      {/* Info clienta */}
-      <div className="bg-white rounded-2xl shadow-sm p-4">
+      <div className="bg-surface rounded-2xl shadow-sm p-4">
         {!editando ? (
           <div className="text-center">
-            <h1 className="text-xl font-bold text-gray-800 break-words">{clienta.nombre}</h1>
-            <p className="text-sm text-gray-600">{clienta.telefono}</p>
-            {clienta.email && <p className="text-sm text-gray-600 break-words">{clienta.email}</p>}
+            <h1 className="text-xl font-bold text-tinta break-words">{clienta.nombre}</h1>
+            <p className="text-sm text-tinta-suave">{clienta.telefono}</p>
+            {clienta.email && <p className="text-sm text-tinta-suave break-words">{clienta.email}</p>}
             {clienta.fecha_nacimiento && (
-              <p className="text-sm text-gray-600">
-                🎂 {fmtFecha(clienta.fecha_nacimiento)}
+              <p className="text-sm text-tinta-suave flex items-center justify-center gap-1.5">
+                <Cake aria-hidden="true" className="size-4" />
+                {fmtFecha(clienta.fecha_nacimiento)}
               </p>
             )}
             <div className="flex justify-center gap-2 mt-3">
               <button
                 type="button"
                 onClick={() => setEditando(true)}
-                className="min-h-11 px-4 py-2.5 text-sm bg-rosa/50 text-rosa-ink rounded-lg transition-colors hover:bg-rosa active:bg-rosa/70"
+                className="min-h-11 px-4 py-2.5 text-sm bg-primary-soft text-primary rounded-lg transition-colors hover:bg-primary-soft active:bg-primary-soft"
               >
-                ✏️ Editar
+                <Pencil aria-hidden="true" className="size-4 inline-block" />
+                Editar
               </button>
               <button
                 type="button"
                 onClick={() => setConfirmDelete(true)}
-                className="min-h-11 px-4 py-2.5 text-sm bg-red-50 text-red-700 rounded-lg transition-colors hover:bg-red-100 active:bg-red-200"
+                className="min-h-11 px-4 py-2.5 text-sm bg-danger/10 text-danger rounded-lg transition-colors hover:bg-danger/10 active:bg-danger/20"
               >
-                🗑️ Eliminar
+                <Trash2 aria-hidden="true" className="size-4 inline-block" />
+                Eliminar
               </button>
             </div>
           </div>
         ) : (
           <form onSubmit={handleEdit} className="space-y-3">
-            <h2 className="font-semibold text-gray-800 text-center mb-2">Editar datos</h2>
+            <h2 className="font-semibold text-tinta text-center mb-2">Editar datos</h2>
             {error && (
-              <div role="alert" className="bg-red-50 text-red-800 text-sm p-2 rounded-lg">
+              <div role="alert" className="bg-danger/10 text-danger text-sm p-2 rounded-lg">
                 {error}
               </div>
             )}
@@ -232,7 +233,6 @@ export default function DetalleClienta() {
             </div>
             <div>
               <span className="sr-only">Fecha de nacimiento</span>
-              {/* DatePicker propio en vez de type="date": el nativo es pésimo en móvil */}
               <DatePicker
                 value={form.fecha_nacimiento}
                 onChange={(v) => setForm({ ...form, fecha_nacimiento: v })}
@@ -243,14 +243,14 @@ export default function DetalleClienta() {
               <button
                 type="submit"
                 disabled={saving}
-                className="flex-1 min-h-11 bg-rosa-ink text-white py-2.5 rounded-lg text-sm font-medium transition-colors hover:bg-rosa-ink/90 active:bg-rosa-ink/95 disabled:opacity-50"
+                className="flex-1 min-h-11 bg-primary text-white py-2.5 rounded-lg text-sm font-medium transition-colors hover:bg-primary/90 active:bg-primary/95 disabled:opacity-50"
               >
                 {saving ? 'Guardando...' : 'Guardar'}
               </button>
               <button
                 type="button"
                 onClick={() => { setEditando(false); setError(''); }}
-                className="flex-1 min-h-11 bg-gray-100 text-gray-700 py-2.5 rounded-lg text-sm font-medium transition-colors hover:bg-gray-200 active:bg-gray-300"
+                className="flex-1 min-h-11 bg-line text-tinta py-2.5 rounded-lg text-sm font-medium transition-colors hover:bg-line/80 active:bg-line"
               >
                 Cancelar
               </button>
@@ -259,15 +259,14 @@ export default function DetalleClienta() {
         )}
       </div>
 
-      {/* Modal confirmación eliminar */}
       {confirmDelete && (
         <Modal titulo="Confirmar eliminación" onCerrar={() => { setConfirmDelete(false); setError(''); }}>
-          <p className="text-sm text-gray-700 text-center">
+          <p className="text-sm text-tinta-suave text-center">
             Se borrarán todos los datos de <strong className="break-words">{clienta.nombre}</strong>:
             tarjetas, visitas y toda su información.
           </p>
           {error && (
-            <div role="alert" className="mt-3 bg-red-50 text-red-800 text-sm p-2 rounded-lg">
+            <div role="alert" className="mt-3 bg-danger/10 text-danger text-sm p-2 rounded-lg">
               {error}
             </div>
           )}
@@ -276,14 +275,14 @@ export default function DetalleClienta() {
               type="button"
               onClick={handleDelete}
               disabled={saving}
-              className="flex-1 min-h-11 bg-red-700 text-white py-2.5 rounded-lg text-sm font-medium transition-colors hover:bg-red-800 active:bg-red-900 disabled:opacity-50"
+              className="flex-1 min-h-11 bg-danger text-white py-2.5 rounded-lg text-sm font-medium transition-colors hover:bg-danger/90 active:bg-danger/95 disabled:opacity-50"
             >
               {saving ? 'Eliminando...' : 'Sí, eliminar'}
             </button>
             <button
               type="button"
               onClick={() => { setConfirmDelete(false); setError(''); }}
-              className="flex-1 min-h-11 bg-gray-100 text-gray-700 py-2.5 rounded-lg text-sm font-medium transition-colors hover:bg-gray-200 active:bg-gray-300"
+              className="flex-1 min-h-11 bg-line text-tinta py-2.5 rounded-lg text-sm font-medium transition-colors hover:bg-line/80 active:bg-line"
             >
               Cancelar
             </button>
@@ -291,10 +290,8 @@ export default function DetalleClienta() {
         </Modal>
       )}
 
-      {/* Banner próximo evento */}
       <BannerEvento evento={clienta.proximo_evento} />
 
-      {/* Tarjeta */}
       {tarjetaActiva ? (
         <TarjetaFidelidad visitas={tarjetaActiva.visitas_completadas} />
       ) : (
@@ -304,17 +301,16 @@ export default function DetalleClienta() {
         />
       )}
 
-      {/* QR Code */}
-      <div className="bg-white rounded-2xl shadow-sm p-6 text-center">
-        <h2 className="font-semibold text-gray-800 mb-3">Código QR</h2>
-        <div className="inline-block p-3 bg-white border rounded-lg max-w-full">
+      <div className="bg-surface rounded-2xl shadow-sm p-6 text-center">
+        <h2 className="font-semibold text-tinta mb-3">Código QR</h2>
+        <div className="inline-block p-3 bg-surface border border-line rounded-lg max-w-full">
           <QRCodeSVG
             value={clienta.qr_code}
             size={180}
             style={{ width: '100%', maxWidth: '180px', height: 'auto' }}
           />
         </div>
-        <p className="text-sm text-gray-600 mt-2">
+        <p className="text-sm text-tinta-suave mt-2">
           La clienta puede mostrar este QR desde su celular
         </p>
         <div className="flex flex-wrap items-center justify-center gap-3 mt-2">
@@ -322,7 +318,7 @@ export default function DetalleClienta() {
             href={qrUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="min-h-11 flex items-center text-sm text-rosa-ink underline underline-offset-2"
+            className="min-h-11 flex items-center text-sm text-primary underline underline-offset-2"
           >
             Ver vista de clienta
           </a>
@@ -330,22 +326,21 @@ export default function DetalleClienta() {
         </div>
       </div>
 
-      {/* Historial */}
-      <div className="bg-white rounded-2xl shadow-sm p-4">
-        <h2 className="font-semibold text-gray-800 mb-3">Historial de visitas</h2>
+      <div className="bg-surface rounded-2xl shadow-sm p-4">
+        <h2 className="font-semibold text-tinta mb-3">Historial de visitas</h2>
         {tarjetaActiva?.visitas?.length > 0 ? (
           <ul className="space-y-2">
             {tarjetaActiva.visitas.map((v) => (
               <li
                 key={v.id}
-                className="flex items-center justify-between text-sm border-b border-gray-100 pb-2 last:border-0"
+                className="flex items-center justify-between text-sm border-b border-line pb-2 last:border-0"
               >
                 <span>Visita {v.numero_visita}</span>
                 <div className="text-right flex items-center gap-2">
-                  <span className="text-gray-600 tabular-nums">{fmtFecha(v.fecha)}</span>
+                  <span className="text-tinta-suave tabular-nums">{fmtFecha(v.fecha)}</span>
                   {v.recompensa && (
-                    <span className="text-dorado-ink" title={v.recompensa} aria-label={v.recompensa}>
-                      🏆
+                    <span className="inline-flex items-center gap-1 text-primary" title={v.recompensa} aria-label={v.recompensa}>
+                      <Trophy aria-hidden="true" className="size-4" />
                     </span>
                   )}
                 </div>
@@ -353,7 +348,7 @@ export default function DetalleClienta() {
             ))}
           </ul>
         ) : (
-          <p className="text-sm text-gray-600">Sin visitas aún</p>
+          <p className="text-sm text-tinta-suave">Sin visitas aún</p>
         )}
       </div>
     </div>

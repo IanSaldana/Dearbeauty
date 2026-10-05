@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { ChevronLeft, ChevronRight, X, Plus, Trash2 } from 'lucide-react';
 import Modal from '../components/Modal';
 import DatePicker from '../components/DatePicker';
 import { Vacio } from '../components/Estados';
@@ -143,8 +144,6 @@ export default function Calendario() {
     }
   };
 
-  /* Antes se consultaba en cada tecla: con 200 clientas saturaba el servidor
-     y los resultados parpadeaban mientras se escribía. */
   const buscarClientas = (q) => {
     setBusquedaClienta(q);
     clearTimeout(debounceRef.current);
@@ -173,26 +172,25 @@ export default function Calendario() {
     setClientas([]);
   };
 
-  const campo = 'w-full min-h-11 px-3 py-2 border border-gray-300 rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-rosa-ink/50';
-  const navBtn = 'w-11 h-11 flex items-center justify-center text-gray-600 rounded-lg transition-colors hover:bg-rosa/30 active:bg-rosa/50';
+  const campo = 'w-full min-h-11 px-3 py-2 border border-line rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-primary/50';
+  const navBtn = 'w-11 h-11 flex items-center justify-center text-tinta-suave rounded-lg transition-colors hover:bg-primary-soft active:bg-primary-soft';
 
   return (
     <div className="max-w-lg mx-auto px-4 py-6 pb-24 space-y-4 safe-top safe-bottom">
-      {/* Header mes */}
       <div className="flex items-center justify-between">
         <button type="button" onClick={() => cambiarMes(-1)} aria-label="Mes anterior" className={navBtn}>
-          ←
+          <ChevronLeft aria-hidden="true" className="size-5" />
         </button>
-        <h1 className="text-lg font-bold text-gray-800">
+        <h1 className="text-lg font-bold text-tinta">
           {MESES[mesActual.mes]} {mesActual.anio}
         </h1>
         <button type="button" onClick={() => cambiarMes(1)} aria-label="Mes siguiente" className={navBtn}>
-          →
+          <ChevronRight aria-hidden="true" className="size-5" />
         </button>
       </div>
 
       {errorCarga && (
-        <div role="alert" className="bg-red-50 text-red-800 text-sm p-3 rounded-lg">
+        <div role="alert" className="bg-danger/10 text-danger text-sm p-3 rounded-lg">
           {errorCarga}{' '}
           <button
             type="button"
@@ -204,11 +202,10 @@ export default function Calendario() {
         </div>
       )}
 
-      {/* Grid calendario */}
-      <div className="bg-white rounded-xl shadow-sm p-3">
+      <div className="bg-surface rounded-xl shadow-sm p-3">
         <div className="grid grid-cols-7 gap-1 mb-1">
           {DIAS_SEMANA.map((d) => (
-            <div key={d} className="text-center text-xs font-medium text-gray-600 py-1">{d}</div>
+            <div key={d} className="text-center text-xs font-medium text-tinta-suave py-1">{d}</div>
           ))}
         </div>
         <div className="grid grid-cols-7 gap-1">
@@ -228,17 +225,17 @@ export default function Calendario() {
                 aria-pressed={seleccionado}
                 className={`relative h-11 rounded-lg text-base font-medium transition-colors motion-reduce:transition-none ${
                   seleccionado
-                    ? 'bg-rosa-ink text-white'
+                    ? 'bg-primary text-white'
                     : esHoy(dia)
-                    ? 'bg-rosa/50 text-rosa-ink'
-                    : 'text-gray-700 hover:bg-gray-100 active:bg-gray-200'
+                    ? 'bg-primary-soft text-primary'
+                    : 'text-tinta hover:bg-line active:bg-line'
                 }`}
               >
                 {dia}
                 {tieneCitas ? (
                   <span
                     className={`absolute bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full ${
-                      seleccionado ? 'bg-white' : 'bg-rosa-ink'
+                      seleccionado ? 'bg-white' : 'bg-primary'
                     }`}
                   />
                 ) : null}
@@ -248,39 +245,37 @@ export default function Calendario() {
         </div>
       </div>
 
-      {/* Vista de día */}
       {diaSeleccionado && (
-        <div className="bg-white rounded-xl shadow-sm p-4 space-y-3">
+        <div className="bg-surface rounded-xl shadow-sm p-4 space-y-3">
           <div className="flex items-center justify-between">
-            <h2 className="font-semibold text-gray-800">
+            <h2 className="font-semibold text-tinta">
               {diaSeleccionado} de {MESES[mesActual.mes]}
             </h2>
             <button
               type="button"
               onClick={abrirNuevaCita}
               aria-label="Nueva cita"
-              className="w-11 h-11 bg-rosa-ink text-white rounded-full flex items-center justify-center text-lg transition-colors hover:bg-rosa-ink/90 active:bg-rosa-ink/95"
+              className="w-11 h-11 bg-primary text-white rounded-full flex items-center justify-center text-lg transition-colors hover:bg-primary/90 active:bg-primary/95"
             >
-              +
+              <Plus aria-hidden="true" className="size-5" />
             </button>
           </div>
 
           {citasDia.length === 0 ? (
-            <p className="text-sm text-gray-600 text-center py-4">
+            <p className="text-sm text-tinta-suave text-center py-4">
               Sin citas este día. Usa + para agendar una.
             </p>
           ) : (
             <ul className="space-y-2">
               {citasDia.map((cita) => (
                 <li key={cita.id} className="flex items-start gap-2">
-                  {/* era un div con onClick: inaccesible con Talkback y teclado */}
                   <button
                     type="button"
                     onClick={() => abrirEditarCita(cita)}
-                    className="flex-1 min-w-0 min-h-11 text-left p-2 rounded-lg transition-colors hover:bg-rosa/20 active:bg-rosa/30"
+                    className="flex-1 min-w-0 min-h-11 text-left p-2 rounded-lg transition-colors hover:bg-primary-soft active:bg-primary-soft"
                   >
-                    <p className="text-sm font-medium text-gray-800 truncate">{cita.titulo}</p>
-                    <p className="text-xs text-gray-600">
+                    <p className="text-sm font-medium text-tinta truncate">{cita.titulo}</p>
+                    <p className="text-xs text-tinta-suave">
                       {cita.hora_inicio}{cita.hora_fin ? ` – ${cita.hora_fin}` : ''}
                       {cita.clienta && ` · ${cita.clienta.nombre}`}
                     </p>
@@ -289,9 +284,9 @@ export default function Calendario() {
                     type="button"
                     onClick={() => { setModalError(''); setEliminarId(cita.id); }}
                     aria-label={`Eliminar cita ${cita.titulo}`}
-                    className="w-11 h-11 flex items-center justify-center text-red-700 rounded-lg transition-colors hover:bg-red-100 active:bg-red-200 shrink-0"
+                    className="w-11 h-11 flex items-center justify-center text-danger rounded-lg transition-colors hover:bg-danger/10 active:bg-danger/20 shrink-0"
                   >
-                    ✕
+                    <Trash2 aria-hidden="true" className="size-5" />
                   </button>
                 </li>
               ))}
@@ -307,18 +302,17 @@ export default function Calendario() {
         />
       )}
 
-      {/* Modal crear/editar cita */}
       {showModal && (
         <Modal titulo={editandoCita ? 'Editar cita' : 'Nueva cita'} onCerrar={() => { setShowModal(false); setModalError(''); }}>
           {modalError && (
-            <div role="alert" className="bg-red-50 text-red-800 text-sm p-3 rounded-lg mb-3">
+            <div role="alert" className="bg-danger/10 text-danger text-sm p-3 rounded-lg mb-3">
               {modalError}
             </div>
           )}
 
           <form onSubmit={guardarCita} className="space-y-3">
             <div>
-              <label htmlFor="cita-titulo" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="cita-titulo" className="block text-sm font-medium text-tinta mb-1">
                 Título *
               </label>
               <input
@@ -333,10 +327,9 @@ export default function Calendario() {
             </div>
 
             <div>
-              <span className="block text-sm font-medium text-gray-700 mb-1" id="cita-fecha-label">
+              <span className="block text-sm font-medium text-tinta mb-1" id="cita-fecha-label">
                 Fecha *
               </span>
-              {/* DatePicker propio en vez de type="date": el nativo abre un spinner */}
               <DatePicker
                 value={form.fecha}
                 onChange={(v) => setForm({ ...form, fecha: v })}
@@ -346,7 +339,7 @@ export default function Calendario() {
 
             <div className="grid grid-cols-2 gap-2">
               <div>
-                <label htmlFor="cita-hora-inicio" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="cita-hora-inicio" className="block text-sm font-medium text-tinta mb-1">
                   Hora inicio *
                 </label>
                 <input
@@ -360,7 +353,7 @@ export default function Calendario() {
                 />
               </div>
               <div>
-                <label htmlFor="cita-hora-fin" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="cita-hora-fin" className="block text-sm font-medium text-tinta mb-1">
                   Hora fin
                 </label>
                 <input
@@ -373,9 +366,8 @@ export default function Calendario() {
               </div>
             </div>
 
-            {/* Buscar clienta */}
             <div className="relative">
-              <label htmlFor="cita-clienta" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="cita-clienta" className="block text-sm font-medium text-tinta mb-1">
                 Clienta (opcional)
               </label>
               <input
@@ -396,13 +388,13 @@ export default function Calendario() {
                   type="button"
                   onClick={() => { setForm({ ...form, clienta_id: null }); setBusquedaClienta(''); }}
                   aria-label="Quitar clienta seleccionada"
-                  className="absolute right-0 top-8 bottom-0 w-11 flex items-center justify-center text-gray-600 transition-colors active:bg-gray-100"
+                  className="absolute right-0 top-8 bottom-0 w-11 flex items-center justify-center text-tinta-suave transition-colors active:bg-line"
                 >
-                  ✕
+                  <X aria-hidden="true" className="size-5" />
                 </button>
               )}
               {buscandoClienta && (
-                <p className="text-xs text-gray-600 mt-1" role="status">
+                <p className="text-xs text-tinta-suave mt-1" role="status">
                   Buscando…
                 </p>
               )}
@@ -410,17 +402,16 @@ export default function Calendario() {
                 id="resultados-clientas"
                 role="listbox"
                 aria-label="Clientas encontradas"
-                className={`absolute left-0 right-0 top-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg z-10 max-h-48 overflow-y-auto ${
+                className={`absolute left-0 right-0 top-full mt-1 bg-surface border border-line rounded-lg shadow-lg z-10 max-h-48 overflow-y-auto ${
                   clientas.length > 0 ? '' : 'hidden'
                 }`}
               >
                 {clientas.map((c) => (
                   <li key={c.id} role="option" aria-selected="false">
-                    {/* era un li con onClick: sin rol ni teclado */}
                     <button
                       type="button"
                       onClick={() => seleccionarClienta(c)}
-                      className="w-full text-left px-3 py-3 min-h-11 text-sm transition-colors hover:bg-rosa/20 active:bg-rosa/30"
+                      className="w-full text-left px-3 py-3 min-h-11 text-sm transition-colors hover:bg-primary-soft active:bg-primary-soft"
                     >
                       {c.nombre} · {c.telefono}
                     </button>
@@ -430,7 +421,7 @@ export default function Calendario() {
             </div>
 
             <div>
-              <label htmlFor="cita-notas" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="cita-notas" className="block text-sm font-medium text-tinta mb-1">
                 Notas
               </label>
               <textarea
@@ -446,14 +437,14 @@ export default function Calendario() {
               <button
                 type="submit"
                 disabled={loading}
-                className="flex-1 min-h-11 bg-rosa-ink text-white py-2.5 rounded-lg text-sm font-medium transition-colors hover:bg-rosa-ink/90 active:bg-rosa-ink/95 disabled:opacity-50"
+                className="flex-1 min-h-11 bg-primary text-white py-2.5 rounded-lg text-sm font-medium transition-colors hover:bg-primary/90 active:bg-primary/95 disabled:opacity-50"
               >
                 {loading ? 'Guardando...' : 'Guardar'}
               </button>
               <button
                 type="button"
                 onClick={() => { setShowModal(false); setModalError(''); }}
-                className="flex-1 min-h-11 bg-gray-100 text-gray-700 py-2.5 rounded-lg text-sm font-medium transition-colors hover:bg-gray-200 active:bg-gray-300"
+                className="flex-1 min-h-11 bg-line text-tinta py-2.5 rounded-lg text-sm font-medium transition-colors hover:bg-line/80 active:bg-line"
               >
                 Cancelar
               </button>
@@ -462,14 +453,13 @@ export default function Calendario() {
         </Modal>
       )}
 
-      {/* Modal confirmar eliminación */}
       {eliminarId != null && (
         <Modal titulo="Eliminar cita" onCerrar={() => { setEliminarId(null); setModalError(''); }}>
-          <p className="text-sm text-gray-700 text-center">
+          <p className="text-sm text-tinta-suave text-center">
             Esta acción no se puede deshacer.
           </p>
           {modalError && (
-            <div role="alert" className="mt-3 bg-red-50 text-red-800 text-sm p-3 rounded-lg">
+            <div role="alert" className="mt-3 bg-danger/10 text-danger text-sm p-3 rounded-lg">
               {modalError}
             </div>
           )}
@@ -477,14 +467,14 @@ export default function Calendario() {
             <button
               type="button"
               onClick={eliminarCita}
-              className="flex-1 min-h-11 bg-red-700 text-white py-2.5 rounded-lg text-sm font-medium transition-colors hover:bg-red-800 active:bg-red-900"
+              className="flex-1 min-h-11 bg-danger text-white py-2.5 rounded-lg text-sm font-medium transition-colors hover:bg-danger/90 active:bg-danger/95"
             >
               Sí, eliminar
             </button>
             <button
               type="button"
               onClick={() => { setEliminarId(null); setModalError(''); }}
-              className="flex-1 min-h-11 bg-gray-100 text-gray-700 py-2.5 rounded-lg text-sm font-medium transition-colors hover:bg-gray-200 active:bg-gray-300"
+              className="flex-1 min-h-11 bg-line text-tinta py-2.5 rounded-lg text-sm font-medium transition-colors hover:bg-line/80 active:bg-line"
             >
               Cancelar
             </button>

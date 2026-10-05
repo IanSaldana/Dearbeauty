@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { Camera, Flashlight, X, Search, Loader2 } from 'lucide-react';
 import { Html5Qrcode } from 'html5-qrcode';
 import api, { mensajeDeError } from '../services/api';
 
@@ -11,8 +12,6 @@ export default function EscanerQR({ onScan, onError }) {
   const [torchOn, setTorchOn] = useState(false);
   const scannerRef = useRef(null);
 
-  /* En el salón la luz es mala: la linterna es la diferencia entre
-     escanear el QR en dos segundos o no poder escanearlo. */
   const applyTorch = async (activo) => {
     const scanner = scannerRef.current;
     if (!scanner?.isScanning) return;
@@ -36,7 +35,6 @@ export default function EscanerQR({ onScan, onError }) {
         {
           fps: 10,
           qrbox: (viewfinderWidth, viewfinderHeight) => {
-            /*qrbox responsivo: en un celular angosto un cuadrado fijo se sale del visor */
             const lado = Math.floor(Math.min(viewfinderWidth, viewfinderHeight) * 0.72);
             return { width: lado, height: lado };
           },
@@ -116,9 +114,10 @@ export default function EscanerQR({ onScan, onError }) {
         <button
           type="button"
           onClick={startScanning}
-          className="min-h-11 bg-rosa-ink text-white px-6 py-3 rounded-full font-medium transition-colors hover:bg-rosa-ink/90 active:bg-rosa-ink/95"
+          className="min-h-11 bg-primary text-white px-6 py-3 rounded-full font-medium transition-colors hover:bg-primary/90 active:bg-primary/95"
         >
-          📷 Abrir cámara
+          <Camera aria-hidden="true" className="size-5 inline-block mr-2" />
+          Abrir cámara
         </button>
       ) : (
         <div className="flex gap-3">
@@ -127,29 +126,35 @@ export default function EscanerQR({ onScan, onError }) {
               type="button"
               onClick={() => applyTorch(false)}
               aria-pressed="true"
-              className="min-h-11 px-5 py-3 rounded-full bg-dorado/25 text-dorado-ink font-medium transition-colors active:bg-dorado/40"
+              className="min-h-11 px-5 py-3 rounded-full bg-durazno-100 text-primary font-medium transition-colors active:bg-durazno-200"
             >
-              🔦 Apagar luz
+              <Flashlight aria-hidden="true" className="size-5 inline-block mr-2" />
+              Apagar luz
             </button>
           )}
           <button
             type="button"
             onClick={stopScanning}
-            className="min-h-11 bg-gray-600 text-white px-6 py-3 rounded-full font-medium transition-colors hover:bg-gray-700 active:bg-gray-800"
+            className="min-h-11 bg-tinta-suave text-white px-6 py-3 rounded-full font-medium transition-colors hover:bg-tinta active:bg-tinta"
           >
+            <X aria-hidden="true" className="size-5 inline-block mr-2" />
             Cerrar cámara
           </button>
         </div>
       )}
 
-      {/* Buscar por nombre o teléfono: el camino cuando la cámara no abre */}
       <button
         type="button"
         onClick={() => setShowBuscar(!showBuscar)}
         aria-expanded={showBuscar}
-        className="min-h-11 px-3 text-sm text-rosa-ink underline underline-offset-2"
+        className="min-h-11 px-3 text-sm text-primary underline underline-offset-2"
       >
-        {showBuscar ? 'Ocultar búsqueda' : 'Buscar por nombre o teléfono'}
+        {showBuscar ? 'Ocultar búsqueda' : (
+          <>
+            <Search aria-hidden="true" className="size-4 inline-block mr-1.5" />
+            Buscar por nombre o teléfono
+          </>
+        )}
       </button>
 
       {showBuscar && (
@@ -161,7 +166,7 @@ export default function EscanerQR({ onScan, onError }) {
               onChange={(e) => setBusqueda(e.target.value)}
               placeholder="Nombre o teléfono..."
               aria-label="Buscar clienta por nombre o teléfono"
-              className="flex-1 min-w-0 min-h-11 px-4 py-2 border border-gray-300 rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-rosa-ink/50"
+              className="flex-1 min-w-0 min-h-11 px-4 py-2 border border-line rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-primary/50"
               enterKeyHint="search"
               autoCapitalize="none"
               autoCorrect="off"
@@ -170,23 +175,23 @@ export default function EscanerQR({ onScan, onError }) {
             <button
               type="submit"
               disabled={buscando || busqueda.trim().length < 2}
-              className="min-h-11 shrink-0 bg-rosa-ink text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors active:bg-rosa-ink/95 disabled:opacity-50"
+              className="min-h-11 shrink-0 bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors active:bg-primary/95 disabled:opacity-50"
             >
-              {buscando ? '...' : 'Buscar'}
+              {buscando ? <Loader2 aria-hidden="true" className="size-4 animate-spin" /> : 'Buscar'}
             </button>
           </form>
 
           {resultados.length > 0 && (
-            <ul className="bg-white rounded-lg shadow-sm border divide-y">
+            <ul className="bg-surface rounded-lg shadow-sm border border-line divide-y divide-line">
               {resultados.map((c) => (
                 <li key={c.id}>
                   <button
                     type="button"
                     onClick={() => onScan(c.qr_code)}
-                    className="w-full text-left px-4 py-3 min-h-11 transition-colors hover:bg-rosa/20 active:bg-rosa/30"
+                    className="w-full text-left px-4 py-3 min-h-11 transition-colors hover:bg-primary-soft active:bg-primary-soft"
                   >
-                    <p className="font-medium text-gray-800">{c.nombre}</p>
-                    <p className="text-sm text-gray-600">
+                    <p className="font-medium text-tinta">{c.nombre}</p>
+                    <p className="text-sm text-tinta-suave">
                       {c.telefono} · {c.tarjetas?.[0]?.visitas_completadas || 0}/10 visitas
                     </p>
                   </button>

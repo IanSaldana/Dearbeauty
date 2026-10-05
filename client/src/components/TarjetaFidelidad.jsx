@@ -1,7 +1,9 @@
+import { Gift, BadgePercent, Star, Check } from 'lucide-react';
+
 const recompensas = {
-  5: { label: 'REGALO', icono: '🎁' },
-  7: { label: '15% OFF', icono: '💰' },
-  10: { label: 'GRATIS', icono: '⭐' },
+  5: { label: 'REGALO', icon: Gift },
+  7: { label: '15% OFF', icon: BadgePercent },
+  10: { label: 'GRATIS', icon: Star },
 };
 
 export default function TarjetaFidelidad({ visitas = 0, totalVisitas = 10, animar = false }) {
@@ -11,29 +13,26 @@ export default function TarjetaFidelidad({ visitas = 0, totalVisitas = 10, anima
   );
 
   return (
-    <div className="bg-rosa/60 rounded-2xl shadow-lg p-5 border border-rosa-dark/10">
-      {/* Título */}
+    <div className="bg-primary-soft rounded-2xl shadow-lg p-5 border border-line">
       <div className="text-center mb-1">
-        <h3 className="text-2xl font-black text-rosa-ink tracking-wide uppercase">
+        <h3 className="text-2xl font-black text-primary tracking-wide uppercase">
           Tarjeta de Fidelidad
         </h3>
-        <p className="text-sm text-gray-700 mt-1">
+        <p className="text-sm text-tinta-suave mt-1">
           Obtén un <strong>servicio a elección GRATIS</strong> a tu 10ma visita
         </p>
       </div>
 
-      {/* Sello de progreso: el número que la clienta busca de un vistazo */}
-      <p className="text-center text-sm text-rosa-ink font-medium mt-3">
+      <p className="text-center text-sm text-primary font-medium mt-3">
         {visitas} de {totalVisitas} visitas
         {visitas < totalVisitas && (
-          <span className="text-gray-700 font-normal">
+          <span className="text-tinta-suave font-normal">
             {' · te falta la '}
             <span className="font-semibold">{selloPremio}</span>
           </span>
         )}
       </p>
 
-      {/* Círculos - 2 filas de 5 */}
       <div className="grid grid-cols-5 gap-2 sm:gap-3 mt-4">
         {Array.from({ length: totalVisitas }, (_, i) => {
           const numero = i + 1;
@@ -54,19 +53,19 @@ export default function TarjetaFidelidad({ visitas = 0, totalVisitas = 10, anima
                   w-14 h-14 rounded-full flex items-center justify-center
                   border-2 transition-colors duration-300 motion-reduce:transition-none
                   ${esPremio
-                    ? 'bg-dorado border-dorado-ink/40'
+                    ? 'bg-durazno-100 border-durazno-200'
                     : completada
-                    ? 'bg-rosa-ink border-rosa-ink text-white'
-                    : 'bg-white border-gray-700 text-gray-700'}
+                    ? 'bg-primary border-primary text-white'
+                    : 'bg-surface border-line text-tinta-suave'}
                   ${animar && completada ? 'animar-sello' : ''}
                 `}
               >
                 {esPremio ? (
-                  <span className="text-2xl leading-none" aria-hidden="true">{recompensa.icono}</span>
+                  <recompensa.icon aria-hidden="true" className="size-6 text-primary" />
                 ) : completada ? (
-                  <span className="text-2xl leading-none" aria-hidden="true">✓</span>
+                  <Check aria-hidden="true" className="size-6" />
                 ) : recompensa ? (
-                  <span className="text-xs font-bold text-center leading-tight italic text-gray-700">
+                  <span className="text-xs font-bold text-center leading-tight italic text-tinta-suave">
                     {recompensa.label}
                   </span>
                 ) : null}
@@ -76,8 +75,7 @@ export default function TarjetaFidelidad({ visitas = 0, totalVisitas = 10, anima
         })}
       </div>
 
-      {/* Pie */}
-      <p className="text-center text-xs text-gray-600 mt-4 leading-snug">
+      <p className="text-center text-xs text-tinta-suave mt-4 leading-snug">
         *Debes presentar esta tarjeta para obtener los regalos/descuentos.<br />
         Duración: 1 año desde tu primera cita.
       </p>

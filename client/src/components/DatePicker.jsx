@@ -1,16 +1,15 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { ChevronLeft, ChevronRight, Calendar } from 'lucide-react';
 
 const DIAS_SEMANA = ['Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sá', 'Do'];
 const MESES = [
-  'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junzo',
+  'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
   'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
 ];
 
 const FOCALIZABLES =
   'button:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
-/* La fecha es un valor de solo fecha anclado a UTC en todo el proyecto:
-   se construye y se lee en UTC o el cumpleaños se corre un día. */
 function isoDe(y, mes, dia) {
   return `${y}-${String(mes + 1).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
 }
@@ -36,7 +35,7 @@ export default function DatePicker({
   ariaLabel,
 }) {
   const [open, setOpen] = useState(false);
-  const [vista, setVista] = useState('cal'); // 'cal' (días) | 'selector' (año/mes)
+  const [vista, setVista] = useState('cal');
   const [vistaMes, setVistaMes] = useState(() => {
     const base = parseISODate(value) || new Date();
     return { anio: base.getUTCFullYear(), mes: base.getUTCMonth() };
@@ -44,7 +43,6 @@ export default function DatePicker({
   const panelRef = useRef(null);
   const gatilloRef = useRef(null);
 
-  /* "Hoy" es hoy en el huso de la manicurista, no en UTC */
   const hoy = new Date();
   const hoyISO = isoDe(hoy.getFullYear(), hoy.getMonth(), hoy.getDate());
 
@@ -118,7 +116,6 @@ export default function DatePicker({
     setVistaMes({ anio: hoy.getFullYear(), mes: hoy.getMonth() });
   };
 
-  /* Bloque de años alineado por década */
   const anioBaseRango = Math.floor(vistaMes.anio / 10) * 10;
   const aniosRango = Array.from({ length: 12 }, (_, i) => anioBaseRango + i);
 
@@ -132,10 +129,9 @@ export default function DatePicker({
     setVista('cal');
   };
 
-  const navBtn =
-    'w-11 h-11 flex items-center justify-center rounded-lg text-gray-700 transition-colors hover:bg-rosa/40 active:bg-rosa/60';
+  const navBtn = 'w-11 h-11 flex items-center justify-center rounded-lg text-tinta transition-colors hover:bg-primary-soft active:bg-primary-soft';
   const celdaBase = 'min-h-11 text-sm rounded-lg transition-colors';
-  const vinculo = 'min-h-11 px-2 text-xs font-medium text-rosa-ink underline-offset-2 hover:underline';
+  const vinculo = 'min-h-11 px-2 text-xs font-medium text-primary underline-offset-2 hover:underline';
 
   return (
     <div className="relative">
@@ -154,23 +150,17 @@ export default function DatePicker({
         className={`
           w-full min-h-11 px-4 py-2.5 rounded-lg text-left flex items-center justify-between gap-2
           border transition-colors
-          focus:outline-none focus:ring-2 focus:ring-rosa-ink/40 focus:border-rosa-ink/40
-          ${value ? 'text-gray-800 border-gray-300 bg-white' : 'text-gray-500 border-gray-300 bg-white'}
+          focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary/40
+          ${value ? 'text-tinta border-line bg-surface' : 'text-tinta-suave border-line bg-surface'}
         `}
       >
         <span className="truncate">{value ? formatDisplay(value) : placeholder}</span>
-        <span className="text-rosa-ink shrink-0" aria-hidden="true">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <rect x="3" y="4" width="18" height="18" rx="2" />
-            <path d="M16 2v4M8 2v4M3 10h18" />
-          </svg>
-        </span>
+        <Calendar aria-hidden="true" className="size-5 text-primary shrink-0" />
       </button>
 
       {open && (
-        /* Bottom sheet en móvil: el popover absoluto quedaba detrás del teclado */
         <div
-          className="fixed inset-0 z-40 flex items-end sm:items-center sm:justify-center bg-gray-900/40"
+          className="fixed inset-0 z-40 flex items-end sm:items-center sm:justify-center bg-tinta/40"
           onMouseDown={(e) => {
             if (e.target === e.currentTarget) cerrar();
           }}
@@ -180,7 +170,7 @@ export default function DatePicker({
             role="dialog"
             aria-modal="true"
             aria-label={ariaLabel || 'Selector de fecha'}
-            className="bg-white w-full sm:max-w-xs rounded-t-2xl sm:rounded-2xl shadow-lg border border-rosa-dark/20 p-3 max-h-[85dvh] overflow-y-auto safe-bottom"
+            className="bg-surface w-full sm:max-w-xs rounded-t-2xl sm:rounded-2xl shadow-lg border border-line p-3 max-h-[85dvh] overflow-y-auto safe-bottom"
           >
             {vista === 'selector' ? (
               <div>
@@ -191,10 +181,10 @@ export default function DatePicker({
                     aria-label="Década anterior"
                     className={navBtn}
                   >
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6" /></svg>
+                    <ChevronLeft aria-hidden="true" className="size-5" />
                   </button>
                   <div className="text-center">
-                    <p className="text-sm font-bold text-gray-800">
+                    <p className="text-sm font-bold text-tinta">
                       {anioBaseRango} — {anioBaseRango + 11}
                     </p>
                     <button type="button" onClick={() => setVista('cal')} className={vinculo}>
@@ -207,7 +197,7 @@ export default function DatePicker({
                     aria-label="Década siguiente"
                     className={navBtn}
                   >
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18l6-6-6-6" /></svg>
+                    <ChevronRight aria-hidden="true" className="size-5" />
                   </button>
                 </div>
 
@@ -220,8 +210,8 @@ export default function DatePicker({
                       aria-pressed={anio === vistaMes.anio}
                       className={`${celdaBase} ${
                         anio === vistaMes.anio
-                          ? 'bg-rosa-ink text-white font-semibold shadow-sm'
-                          : 'text-gray-700 hover:bg-rosa/40 active:bg-rosa/60'
+                          ? 'bg-primary text-white font-semibold shadow-sm'
+                          : 'text-tinta hover:bg-primary-soft active:bg-primary-soft'
                       }`}
                     >
                       {anio}
@@ -238,8 +228,8 @@ export default function DatePicker({
                       aria-pressed={idx === vistaMes.mes}
                       className={`${celdaBase} text-xs ${
                         idx === vistaMes.mes
-                          ? 'bg-rosa-ink text-white font-semibold shadow-sm'
-                          : 'text-gray-700 hover:bg-rosa/40 active:bg-rosa/60'
+                          ? 'bg-primary text-white font-semibold shadow-sm'
+                          : 'text-tinta hover:bg-primary-soft active:bg-primary-soft'
                       }`}
                     >
                       {nombreMes.slice(0, 3)}
@@ -256,14 +246,14 @@ export default function DatePicker({
                     aria-label="Mes anterior"
                     className={navBtn}
                   >
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6" /></svg>
+                    <ChevronLeft aria-hidden="true" className="size-5" />
                   </button>
                   <div className="text-center">
                     <button
                       type="button"
                       onClick={() => setVista('selector')}
                       aria-label="Elegir año y mes"
-                      className="min-h-11 text-sm font-bold text-gray-800 transition-colors hover:text-rosa-ink"
+                      className="min-h-11 text-sm font-bold text-tinta transition-colors hover:text-primary"
                     >
                       {MESES[vistaMes.mes]} {vistaMes.anio}
                     </button>
@@ -277,13 +267,13 @@ export default function DatePicker({
                     aria-label="Mes siguiente"
                     className={navBtn}
                   >
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18l6-6-6-6" /></svg>
+                    <ChevronRight aria-hidden="true" className="size-5" />
                   </button>
                 </div>
 
                 <div className="grid grid-cols-7 gap-1 mb-1">
                   {DIAS_SEMANA.map((d) => (
-                    <div key={d} className="text-center text-xs font-semibold text-gray-600 py-1">
+                    <div key={d} className="text-center text-xs font-semibold text-tinta-suave py-1">
                       {d}
                     </div>
                   ))}
@@ -309,12 +299,12 @@ export default function DatePicker({
                         aria-pressed={seleccionado}
                         className={`${celdaBase} ${
                           futuro
-                            ? 'text-gray-400 cursor-not-allowed'
+                            ? 'text-tinta-suave cursor-not-allowed'
                             : seleccionado
-                            ? 'bg-rosa-ink text-white font-semibold shadow-sm'
+                            ? 'bg-primary text-white font-semibold shadow-sm'
                             : esHoy
-                            ? 'bg-rosa/70 text-rosa-ink font-semibold'
-                            : 'text-gray-700 hover:bg-rosa/40 active:bg-rosa/60'
+                            ? 'bg-primary-soft text-primary font-semibold'
+                            : 'text-tinta hover:bg-primary-soft active:bg-primary-soft'
                         }`}
                       >
                         {dia}

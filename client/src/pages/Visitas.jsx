@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
+import { Gift } from 'lucide-react';
 import api from '../services/api';
 import { EsqueletoLista, Vacio, ErrorConReintento } from '../components/Estados';
 
@@ -45,9 +46,8 @@ export default function Visitas() {
 
   return (
     <div className="max-w-lg mx-auto px-4 py-6 pb-24 space-y-4 safe-top safe-bottom">
-      <h1 className="text-xl font-bold text-gray-800">Registro de Visitas</h1>
+      <h1 className="text-xl font-bold text-tinta">Registro de Visitas</h1>
 
-      {/* Filtros: carrusel con snap, el pulgar no tiene precisión de mouse */}
       <div
         role="group"
         aria-label="Filtrar visitas por periodo"
@@ -61,8 +61,8 @@ export default function Visitas() {
             aria-pressed={periodo === f.key}
             className={`scroll-snap-inicio min-h-11 shrink-0 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
               periodo === f.key
-                ? 'bg-rosa-ink text-white'
-                : 'bg-white text-gray-600 border border-gray-300 hover:border-rosa-ink/50 active:bg-rosa/20'
+                ? 'bg-primary text-white'
+                : 'bg-surface text-tinta-suave border border-line hover:border-primary/50 active:bg-primary-soft'
             }`}
           >
             {f.label}
@@ -86,13 +86,13 @@ export default function Visitas() {
               <li key={v.id}>
                 <Link
                   to={`/clienta/detalle/${v.tarjeta?.clienta?.id}`}
-                  className="block min-h-11 p-3 bg-white rounded-xl shadow-sm transition-colors hover:bg-rosa/20 active:bg-rosa/30"
+                  className="block min-h-11 p-3 bg-surface rounded-xl shadow-sm transition-colors hover:bg-primary-soft active:bg-primary-soft"
                 >
                   <div className="flex items-center justify-between gap-2">
-                    <p className="font-medium text-gray-800 truncate">
+                    <p className="font-medium text-tinta truncate">
                       {v.tarjeta?.clienta?.nombre || 'Clienta'}
                     </p>
-                    <span className="text-xs text-gray-600 whitespace-nowrap tabular-nums">
+                    <span className="text-xs text-tinta-suave whitespace-nowrap tabular-nums">
                       {new Date(v.fecha).toLocaleDateString('es-CL')} ·{' '}
                       {new Date(v.fecha).toLocaleTimeString('es-CL', {
                         hour: '2-digit',
@@ -101,10 +101,11 @@ export default function Visitas() {
                     </span>
                   </div>
                   <div className="flex items-center justify-between gap-2 mt-1">
-                    <span className="text-sm text-gray-600">Visita {v.numero_visita} de 10</span>
+                    <span className="text-sm text-tinta-suave">Visita {v.numero_visita} de 10</span>
                     {v.recompensa && (
-                      <span className="text-xs bg-dorado/20 text-dorado-ink px-2 py-0.5 rounded-full font-medium whitespace-nowrap">
-                        🎁 {v.recompensa.split(' - ')[0]}
+                      <span className="inline-flex items-center gap-1.5 text-xs bg-durazno-100 text-primary px-2 py-0.5 rounded-full font-medium whitespace-nowrap">
+                        <Gift aria-hidden="true" className="size-3" />
+                        {v.recompensa.split(' - ')[0]}
                       </span>
                     )}
                   </div>
@@ -113,7 +114,7 @@ export default function Visitas() {
             ))}
           </ul>
           {visitas.length >= Number(LIMITE) && (
-            <p className="text-center text-xs text-gray-600">
+            <p className="text-center text-xs text-tinta-suave">
               Mostrando las {LIMITE} visitas más recientes
             </p>
           )}

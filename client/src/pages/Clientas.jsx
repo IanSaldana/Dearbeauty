@@ -22,8 +22,6 @@ export default function Clientas() {
 
   useEffect(cargar, [cargar]);
 
-  /* Al cambiar el filtro la lista se acorta: volver a la página 1 desde el
-     handler evita el setState en efecto. */
   const buscar = (valor) => {
     setBusqueda(valor);
     setPagina(1);
@@ -35,8 +33,6 @@ export default function Clientas() {
     cargar();
   };
 
-  /* El filtrado ocurre sobre un inputmemoizado: sin debounce cada tecla
-     reordenaba el array completo. */
   const clientasOrdenadas = useMemo(() => {
     const q = busqueda.trim().toLowerCase();
     const filtradas = q
@@ -52,9 +48,8 @@ export default function Clientas() {
 
   return (
     <div className="max-w-lg mx-auto px-4 py-6 pb-24 space-y-4 safe-top safe-bottom">
-      <h1 className="text-xl font-bold text-gray-800">Clientas</h1>
+      <h1 className="text-xl font-bold text-tinta">Clientas</h1>
 
-      {/* Buscador */}
       <input
         type="search"
         placeholder="Buscar por nombre o teléfono..."
@@ -65,7 +60,7 @@ export default function Clientas() {
         autoCapitalize="none"
         autoCorrect="off"
         spellCheck="false"
-        className="w-full min-h-11 px-4 py-2 rounded-xl border border-rosa-dark/30 bg-white focus:outline-none focus:ring-2 focus:ring-rosa-ink/50"
+        className="w-full min-h-11 px-4 py-2 rounded-xl border border-line bg-surface focus:outline-none focus:ring-2 focus:ring-primary/50"
       />
 
       {loading ? (
@@ -91,20 +86,20 @@ export default function Clientas() {
                 <li key={c.id}>
                   <Link
                     to={`/clienta/detalle/${c.id}`}
-                    className="flex items-center gap-3 min-h-11 p-3 bg-white rounded-xl shadow-sm transition-colors hover:bg-rosa/20 active:bg-rosa/30"
+                    className="flex items-center gap-3 min-h-11 p-3 bg-surface rounded-xl shadow-sm transition-colors hover:bg-primary-soft active:bg-primary-soft"
                   >
                     <div className="flex-1 min-w-0">
-                      <p className="font-medium text-gray-800 truncate">{c.nombre}</p>
-                      <p className="text-sm text-gray-600">{c.telefono}</p>
+                      <p className="font-medium text-tinta truncate">{c.nombre}</p>
+                      <p className="text-sm text-tinta-suave">{c.telefono}</p>
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
-                      <div className="w-16 h-2 bg-gray-200 rounded-full overflow-hidden">
+                      <div className="w-16 h-2 bg-line rounded-full overflow-hidden">
                         <div
-                          className="h-full bg-rosa-ink rounded-full transition-all motion-reduce:transition-none"
+                          className="h-full bg-primary rounded-full transition-all motion-reduce:transition-none"
                           style={{ width: `${progreso}%` }}
                         />
                       </div>
-                      <span className="text-sm text-rosa-ink font-semibold whitespace-nowrap tabular-nums">
+                      <span className="text-sm text-primary font-semibold whitespace-nowrap tabular-nums">
                         {visitas}/10
                       </span>
                     </div>
@@ -114,7 +109,7 @@ export default function Clientas() {
             })}
           </ul>
 
-          <p className="text-center text-xs text-gray-600 tabular-nums" aria-live="polite">
+          <p className="text-center text-xs text-tinta-suave tabular-nums" aria-live="polite">
             Mostrando {visibles.length} de {clientasOrdenadas.length}
           </p>
 
@@ -122,7 +117,7 @@ export default function Clientas() {
             <button
               type="button"
               onClick={() => setPagina((p) => p + 1)}
-              className="w-full min-h-11 bg-white border border-rosa-dark/30 text-rosa-ink font-medium rounded-xl transition-colors hover:bg-rosa/20 active:bg-rosa/30"
+              className="w-full min-h-11 bg-surface border border-line text-primary font-medium rounded-xl transition-colors hover:bg-primary-soft active:bg-primary-soft"
             >
               Ver más clientas
             </button>

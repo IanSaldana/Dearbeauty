@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { mensajeDeError } from '../services/api';
 import useTecladoVirtual from '../hooks/useTecladoVirtual';
+import logo from '../assets/logo.png';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -29,23 +30,23 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-dvh flex items-center justify-center bg-rosa/30 px-4 safe-top safe-bottom">
-      <div className="bg-white rounded-2xl shadow-lg p-8 w-full max-w-sm">
+    <div className="min-h-dvh flex items-center justify-center bg-canvas px-4 safe-top safe-bottom">
+      <div className="bg-surface rounded-2xl shadow-lg p-8 w-full max-w-sm">
         <div className="text-center mb-6">
-          <img src="/icon-192.png" alt="" width="80" height="80" className="w-20 h-20 mx-auto mb-2" />
-          <h1 className="text-2xl font-bold text-rosa-ink">Dear Beauty</h1>
-          <p className="text-gray-600 text-sm mt-1">Panel de Manicurista</p>
+          <img src={logo} alt="" width={80} height={80} className="w-20 h-20 mx-auto mb-2 rounded-full" />
+          <h1 className="text-2xl font-bold text-primary">Dear Beauty</h1>
+          <p className="text-tinta-suave text-sm mt-1">Panel de Manicurista</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && (
-            <div role="alert" className="bg-red-50 text-red-800 text-sm p-3 rounded-lg">
+            <div role="alert" className="bg-danger/10 text-danger text-sm p-3 rounded-lg">
               {error}
             </div>
           )}
 
           <div>
-            <label htmlFor="login-email" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="login-email" className="block text-sm font-medium text-tinta-suave mb-1">
               Email
             </label>
             <input
@@ -54,7 +55,7 @@ export default function Login() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full min-h-11 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rosa-ink/50"
+              className="w-full min-h-11 px-4 py-2 border border-line rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50"
               autoComplete="username"
               inputMode="email"
               enterKeyHint="next"
@@ -66,7 +67,7 @@ export default function Login() {
           </div>
 
           <div>
-            <label htmlFor="login-password" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="login-password" className="block text-sm font-medium text-tinta-suave mb-1">
               Contraseña
             </label>
             <input
@@ -75,7 +76,7 @@ export default function Login() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full min-h-11 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-rosa-ink/50"
+              className="w-full min-h-11 px-4 py-2 border border-line rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50"
               autoComplete="current-password"
               enterKeyHint="go"
               required
@@ -85,7 +86,7 @@ export default function Login() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full min-h-11 bg-rosa-ink text-white py-3 rounded-lg font-medium transition-colors hover:bg-rosa-ink/90 active:bg-rosa-ink/95 disabled:opacity-50"
+            className="w-full min-h-11 bg-primary text-white py-3 rounded-lg font-medium transition-colors hover:bg-primary/90 active:bg-primary/95 disabled:opacity-50"
           >
             {loading ? 'Ingresando...' : 'Iniciar sesión'}
           </button>

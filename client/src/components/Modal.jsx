@@ -44,7 +44,7 @@ export default function Modal({ titulo, onCerrar, children, pie }) {
       document.body.style.overflow = scrollPrevio;
       previo?.focus?.();
     };
-  }, [onCerrar]);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps -- onCerrar cambia cada render en el padre; el efecto solo debe correr al montar/desmontar
 
   return (
     <div
